@@ -28,7 +28,10 @@ import rclpy
 from rclpy.node import Node
 from etsi_its_cam_ts_msgs.msg import *
 import utils
+import numpy as np
 
+def sine_vel(t):
+    return int(50 + 50*np.sin(2*3.1415*60*t))
 
 class Publisher(Node):
 
@@ -50,13 +53,13 @@ class Publisher(Node):
         msg.cam.generation_delta_time.value = int(utils.get_t_its(self.get_clock().now().nanoseconds) % 65536)
 
         msg.cam.cam_parameters.basic_container.station_type.value = msg.cam.cam_parameters.basic_container.station_type.PASSENGER_CAR
-        msg.cam.cam_parameters.basic_container.reference_position.latitude.value = int(50.787369 * 1e7)
+        msg.cam.cam_parameters.basic_container.reference_position.latitude.value = int(self.latitude * 1e7)
         msg.cam.cam_parameters.basic_container.reference_position.longitude.value = int(6.046504 * 1e7)
 
         basic_vehicle_container_high_frequency = BasicVehicleContainerHighFrequency()
         basic_vehicle_container_high_frequency.heading.heading_value.value = basic_vehicle_container_high_frequency.heading.heading_value.WGS84_NORTH
         basic_vehicle_container_high_frequency.heading.heading_confidence.value = basic_vehicle_container_high_frequency.heading.heading_confidence.MIN
-        basic_vehicle_container_high_frequency.speed.speed_value.value = 1
+        basic_vehicle_container_high_frequency.speed.speed_value.value = sine_vel(self.j)
         basic_vehicle_container_high_frequency.speed.speed_confidence.value = basic_vehicle_container_high_frequency.speed.speed_confidence.MIN
         basic_vehicle_container_high_frequency.vehicle_length.vehicle_length_value.value = basic_vehicle_container_high_frequency.vehicle_length.vehicle_length_value.MIN
         basic_vehicle_container_high_frequency.vehicle_width.value = basic_vehicle_container_high_frequency.vehicle_width.MIN
@@ -67,7 +70,11 @@ class Publisher(Node):
 
         self.get_logger().info(f"Publishing CAM (TS)")
         self.publisher.publish(msg)
-
+        self.latitude = self.latitude + 0.00001
+        self.j = self.j + 1
+        
+    latitude = 50.787369
+    j = 0
 
 if __name__ == "__main__":
 
@@ -75,3 +82,4 @@ if __name__ == "__main__":
     publisher = Publisher()
     rclpy.spin(publisher)
     rclpy.shutdown()
+
