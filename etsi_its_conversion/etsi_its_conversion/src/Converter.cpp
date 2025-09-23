@@ -417,19 +417,31 @@ namespace etsi_its_conversion
 
     if (cohda)
     {
+
+      // * Commom header
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(4)); // Version = 4
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(1)); // Message ID = 1 - BTP Data Indication
+      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0)); // Message ID = 1 - BTP Data Request
 
       // Lenght - Big endian
-      uint16_t BTP_lenght = 78 + size;
+      uint16_t BTP_lenght = 70 + size;
       uint8_t *BTP_lenght_uint8 = reinterpret_cast<uint8_t *>(&BTP_lenght);
-      udp_msg.data.insert(udp_msg.data.end(), BTP_lenght_uint8[1]);     // BTP lenght MSB (header + data size)
-      udp_msg.data.insert(udp_msg.data.end(), BTP_lenght_uint8[0]);     // BTP lenght LSB (header + data size)
-      
+
+      //* BTP Data Request header
+      udp_msg.data.insert(udp_msg.data.end(), BTP_lenght_uint8[1]); // BTP lenght MSB (header + data size)
+      udp_msg.data.insert(udp_msg.data.end(), BTP_lenght_uint8[0]); // BTP lenght LSB (header + data size)
+
+      // TODO changes:
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(2)); // BTP Type = 2 - BTP-B, used for CAM, DENM ...
+
+      // TODO changes:
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(7)); // GN Packet Transport   = 7 - SingleHopBroadcast (SHB), used for CAM, SAEM
+
+      // TODO changes:
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(2)); // GN Traffic Class   = 2 - CAM = 0x02 (DP3)
+
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0)); // GGN Max Packet Lifetime     = 0 - use ItsGnMaxPacketLifetime parameter from .conf file.
+
+      // TODO changes:
       // Port + Port info
       uint16_t destination_port = htons(btp_header_destination_port);
       uint16_t destination_port_info = 0;
@@ -438,33 +450,42 @@ namespace etsi_its_conversion
       udp_msg.data.insert(udp_msg.data.end(), btp_header_uint8, btp_header_uint8 + 2 * sizeof(uint16_t));
       delete[] btp_header;
 
-      udp_msg.data.insert(udp_msg.data.end(), 16, static_cast<uint8_t>(0)); // GN destination
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(1));     // GN Security Profile - 0 = Security disabled
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0));     // GN Security Parser Result (Data Indication Only) - 0 = OK
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0));     // GN Security Verify Result (Data Indication only) - 0 = OK
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(3));     // GN Security SSPBits Length (Data Indication only)
 
+      // ? Fill with GNSS?
+      udp_msg.data.insert(udp_msg.data.end(), 16, static_cast<uint8_t>(0)); // GN destination
+
+      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(1)); // GN Comms Profile - 0 = Default
+      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(1)); // GN Repeat Interval - 0 not supported yet
+      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(1)); // GN Security Profile - 0 = Security disabled
+      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(3)); // GN Security SSPBits Length (Data Indication only)
+
+      // // udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0));     // GN Security Parser Result (Data Indication Only) - 0 = OK
+      // // udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0));     // GN Security Verify Result (Data Indication only) - 0 = OK
+
+
+      // TODO changes:
       uint32_t ITS_AID = 0x24; // GN Security ITS-AID - CAM = 0x24
       uint8_t *ITS_AID_uint8 = reinterpret_cast<uint8_t *>(&ITS_AID);
-      udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[3]);    
-      udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[2]);    
-      udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[1]);    
-      udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[0]);    
+      udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[3]);
+      udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[2]);
+      udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[1]);
+      udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[0]);
 
+      // TODO changes (i think so):
       // GN Security SSP Bits
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0x01));  // GN Security SSP Bits
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0xFF));  // GN Security SSP Bits
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0xFC));  // GN Security SSP Bits
       udp_msg.data.insert(udp_msg.data.end(), 29, static_cast<uint8_t>(0)); // GN Security SSP Bits offset
 
-      udp_msg.data.insert(udp_msg.data.end(), 8, static_cast<uint8_t>(0)); // GN Security Certificate Id (Data Indication Only)
+      // // udp_msg.data.insert(udp_msg.data.end(), 8, static_cast<uint8_t>(0)); // GN Security Certificate Id (Data Indication Only)
 
       // Data lenght - Big endian
       uint16_t data_lenght = static_cast<uint16_t>(size);
       RCLCPP_WARN(this->get_logger(), "size: %ld", size);
       uint8_t *data_lenght_uint8 = reinterpret_cast<uint8_t *>(&data_lenght);
-      udp_msg.data.insert(udp_msg.data.end(), data_lenght_uint8[1]);     // Data lenght MSB (header + data size)
-      udp_msg.data.insert(udp_msg.data.end(), data_lenght_uint8[0]);     // Data lenght LSB (header + data size)
+      udp_msg.data.insert(udp_msg.data.end(), data_lenght_uint8[1]); // Data lenght MSB (header + data size)
+      udp_msg.data.insert(udp_msg.data.end(), data_lenght_uint8[0]); // Data lenght LSB (header + data size)
     }
     else
     {
@@ -482,6 +503,7 @@ namespace etsi_its_conversion
 
     RCLCPP_WARN(this->get_logger(), "UDP package header size: %d", udp_msg.data.size());
 
+    //* BTP payload
     udp_msg.data.insert(udp_msg.data.end(), buffer, buffer + size);
 
     // * Print UDP message in hex
