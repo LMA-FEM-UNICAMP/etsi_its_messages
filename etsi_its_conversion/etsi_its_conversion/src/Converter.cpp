@@ -459,13 +459,6 @@ namespace etsi_its_conversion
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(1)); // GN Security Profile - 0 = Security disabled
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(3)); // GN Security SSPBits Length (Data Indication only)
 
-<<<<<<< HEAD
-=======
-      // // udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0));     // GN Security Parser Result (Data Indication Only) - 0 = OK
-      // // udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0));     // GN Security Verify Result (Data Indication only) - 0 = OK
-
->>>>>>> fdc4390a9c1f0313bdf55e1f201183a0d0c4ef0a
-
       // TODO changes:
       uint32_t ITS_AID = 0x24; // GN Security ITS-AID - CAM = 0x24
       uint8_t *ITS_AID_uint8 = reinterpret_cast<uint8_t *>(&ITS_AID);
@@ -481,14 +474,8 @@ namespace etsi_its_conversion
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0xFC));  // GN Security SSP Bits
       udp_msg.data.insert(udp_msg.data.end(), 29, static_cast<uint8_t>(0)); // GN Security SSP Bits offset
 
-<<<<<<< HEAD
-=======
-      // // udp_msg.data.insert(udp_msg.data.end(), 8, static_cast<uint8_t>(0)); // GN Security Certificate Id (Data Indication Only)
-
->>>>>>> fdc4390a9c1f0313bdf55e1f201183a0d0c4ef0a
       // Data lenght - Big endian
       uint16_t data_lenght = static_cast<uint16_t>(size);
-      RCLCPP_WARN(this->get_logger(), "size: %ld", size);
       uint8_t *data_lenght_uint8 = reinterpret_cast<uint8_t *>(&data_lenght);
       udp_msg.data.insert(udp_msg.data.end(), data_lenght_uint8[1]); // Data lenght MSB (header + data size)
       udp_msg.data.insert(udp_msg.data.end(), data_lenght_uint8[0]); // Data lenght LSB (header + data size)
@@ -507,7 +494,7 @@ namespace etsi_its_conversion
       }
     }
 
-    RCLCPP_WARN(this->get_logger(), "UDP package header size: %d", udp_msg.data.size());
+    RCLCPP_WARN(this->get_logger(), "UDP package header size: %ld", udp_msg.data.size());
 
     //* BTP payload
     udp_msg.data.insert(udp_msg.data.end(), buffer, buffer + size);
@@ -723,7 +710,7 @@ namespace etsi_its_conversion
 
     // publish UDP msg
     publisher_udp_->publish(udp_msg);
-    int msg_size = has_btp_destination_port_ ? udp_msg.data.size() - 4 : udp_msg.data.size();
+    int msg_size = has_btp_destination_port_ ? udp_msg.data.size() - 70 : udp_msg.data.size();
     RCLCPP_INFO(this->get_logger(), "Published ETSI message of type '%s' as bitstring (message size: %d | total payload size: %ld)", type.c_str(), msg_size, udp_msg.data.size());
   }
 
