@@ -425,7 +425,6 @@ namespace etsi_its_conversion
       // Lenght - Big endian
       uint16_t BTP_lenght = 70 + size;
       uint8_t *BTP_lenght_uint8 = reinterpret_cast<uint8_t *>(&BTP_lenght);
-<<<<<<< HEAD
       udp_msg.data.insert(udp_msg.data.end(), BTP_lenght_uint8[1]); // BTP lenght MSB (header + data size)
       udp_msg.data.insert(udp_msg.data.end(), BTP_lenght_uint8[0]); // BTP lenght LSB (header + data size)
 
