@@ -178,3 +178,5 @@ pyrightconfig.json
 # ignore ros2 bagfiles
 metadata.yaml
 *.db3
+**/log
+**/.vscode
