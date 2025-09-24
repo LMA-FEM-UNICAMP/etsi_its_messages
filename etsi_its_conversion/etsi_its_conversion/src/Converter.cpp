@@ -25,8 +25,6 @@ SOFTWARE.
 #include <algorithm>
 #include <arpa/inet.h>
 #include <sstream>
-#include <iostream>
-#include <iomanip>
 
 #include <rcutils/logging.h>
 
@@ -70,6 +68,8 @@ namespace etsi_its_conversion
 
   const std::string Converter::kHasBtpDestinationPortParam{"has_btp_destination_port"};
   const bool Converter::kHasBtpDestinationPortParamDefault{true};
+  const std::string Converter::kUsingCohdaBtpHeaderParam{"using_cohda_btp_headers"};
+  const bool Converter::kUsingCohdaBtpHeaderDefault{true};
   const std::string Converter::kBtpDestinationPortOffsetParam{"btp_destination_port_offset"};
   const int Converter::kBtpDestinationPortOffsetParamDefault{8};
   const std::string Converter::kEtsiMessagePayloadOffsetParam{"etsi_message_payload_offset"};
@@ -111,6 +111,15 @@ namespace etsi_its_conversion
     if (!this->get_parameter(kHasBtpDestinationPortParam, has_btp_destination_port_))
     {
       RCLCPP_WARN(this->get_logger(), "Parameter '%s' is not set, defaulting to '%s'", kHasBtpDestinationPortParam.c_str(), kHasBtpDestinationPortParamDefault ? "true" : "false");
+    }
+
+    // load has_btp_destination_port
+    param_desc = rcl_interfaces::msg::ParameterDescriptor();
+    param_desc.description = "Using Cohda BTP header for Data Request.";
+    this->declare_parameter(kUsingCohdaBtpHeaderParam, kUsingCohdaBtpHeaderDefault, param_desc);
+    if (!this->get_parameter(kUsingCohdaBtpHeaderParam, using_cohda_btp_headers_))
+    {
+      RCLCPP_WARN(this->get_logger(), "Parameter '%s' is not set, defaulting to '%s'", kUsingCohdaBtpHeaderParam.c_str(), kUsingCohdaBtpHeaderDefault ? "true" : "false");
     }
 
     // load btp_destination_port_offset
@@ -408,125 +417,135 @@ namespace etsi_its_conversion
     return true;
   }
 
+  std::vector<uint8_t> Converter::cohdaBtpDataRequestHeader(const int data_size, const int btp_header_destination_port)
+  {
+
+    std::vector<uint8_t> btp_data_req_header;
+
+    //* Constructing Cohda BTP Data Request Header
+
+    uint32_t ITS_AID;
+    uint8_t BTP_type;
+    uint8_t GN_packet_transport;
+    uint8_t GN_traffic_class;
+    uint8_t GN_security_profile = 1; // 0 = Security disabled
+                                     // 1 = Security enabled, SSP bitmap type
+                                     // 2 = Opaque type (e.g. used in the SAEM message)
+
+    switch (btp_header_destination_port)
+    {
+    case kBtpHeaderDestinationPortCam: // CAM
+      ITS_AID = 0x24;                  // GN Security ITS-AID - CAM = 0x24
+      BTP_type = 2;                    // BTP Type = 2 - BTP-B, used for CAM, DENM ...
+      GN_packet_transport = 7;         // GN Packet Transport   = 7 - SingleHopBroadcast (SHB), used for CAM, SAEM
+      GN_traffic_class = 0x02;         // GN Traffic Class   = 2 - CAM = 0x02 (DP3)
+      break;
+
+    case kBtpHeaderDestinationPortDenm: // DENM
+      RCLCPP_ERROR(this->get_logger(), "DENM not available yet!");
+      break;
+
+    case kBtpHeaderDestinationPortMapem: // MAP
+      RCLCPP_ERROR(this->get_logger(), "MAP not available yet!");
+      break;
+
+    case kBtpHeaderDestinationPortSpatem: // SPAT
+      RCLCPP_ERROR(this->get_logger(), "SPAT not available yet!");
+      break;
+
+    case kBtpHeaderDestinationPortIvi: // IVIM
+      RCLCPP_ERROR(this->get_logger(), "IVIM not available yet!");
+      break;
+
+    case kBtpHeaderDestinationPortCpmTs: // CPM
+      RCLCPP_ERROR(this->get_logger(), "CPM not available yet!");
+      break;
+
+    case kBtpHeaderDestinationPortVamTs: // VAM
+      RCLCPP_ERROR(this->get_logger(), "VAM not available yet!");
+      break;
+
+    case kBtpHeaderDestinationPortMcmUulm: // MCM
+      RCLCPP_ERROR(this->get_logger(), "MCM not available yet!");
+      break;
+
+    default:
+      RCLCPP_ERROR(this->get_logger(), "Unrecogonized destination port!");
+      break;
+    }
+
+    // * Commom header
+    btp_data_req_header.insert(btp_data_req_header.end(), static_cast<uint8_t>(0x04)); // Version = 4
+    btp_data_req_header.insert(btp_data_req_header.end(), static_cast<uint8_t>(0x00)); // Message ID = 1 - BTP Data Request
+
+    // Lenght - Big endian
+    uint16_t BTP_lenght = 70 + data_size; // 70 is the Cohda BTP Data Request Header lenght
+    uint8_t *BTP_lenght_uint8 = reinterpret_cast<uint8_t *>(&BTP_lenght);
+    btp_data_req_header.insert(btp_data_req_header.end(), BTP_lenght_uint8[1]); // BTP lenght MSB (header + data size)
+    btp_data_req_header.insert(btp_data_req_header.end(), BTP_lenght_uint8[0]); // BTP lenght LSB (header + data size)
+
+    //* BTP Data Request header
+
+    btp_data_req_header.insert(btp_data_req_header.end(), static_cast<uint8_t>(BTP_type)); // BTP Type = 2 - BTP-B, used for CAM, DENM ...
+
+    btp_data_req_header.insert(btp_data_req_header.end(), static_cast<uint8_t>(GN_packet_transport)); // GN Packet Transport   = 7 - SingleHopBroadcast (SHB), used for CAM, SAEM
+
+    btp_data_req_header.insert(btp_data_req_header.end(), static_cast<uint8_t>(GN_traffic_class)); // GN Traffic Class   = 2 - CAM = 0x02 (DP3)
+
+    btp_data_req_header.insert(btp_data_req_header.end(), static_cast<uint8_t>(0x00)); // GGN Max Packet Lifetime     = 0 - use ItsGnMaxPacketLifetime parameter from .conf file.
+
+    // Port + Port info
+    uint16_t destination_port = htons(btp_header_destination_port);
+    uint16_t destination_port_info = 0;
+    uint16_t *btp_header = new uint16_t[2]{destination_port, destination_port_info};
+    uint8_t *btp_header_uint8 = reinterpret_cast<uint8_t *>(btp_header);
+    btp_data_req_header.insert(btp_data_req_header.end(), btp_header_uint8, btp_header_uint8 + 2 * sizeof(uint16_t));
+    delete[] btp_header;
+
+    // ? Fill with GNSS? -> Not for CAM.
+    btp_data_req_header.insert(btp_data_req_header.end(), 16, static_cast<uint8_t>(0x00)); // GN destination
+
+    btp_data_req_header.insert(btp_data_req_header.end(), static_cast<uint8_t>(0x00));                   // GN Comms Profile - 0 = Default
+    btp_data_req_header.insert(btp_data_req_header.end(), static_cast<uint8_t>(0x00));                   // GN Repeat Interval - 0 not supported yet
+    btp_data_req_header.insert(btp_data_req_header.end(), static_cast<uint8_t>(GN_security_profile)); // GN Security Profile
+    btp_data_req_header.insert(btp_data_req_header.end(), static_cast<uint8_t>(0x03));                   // GN Security SSPBits Length
+
+    uint8_t *ITS_AID_uint8 = reinterpret_cast<uint8_t *>(&ITS_AID);
+    btp_data_req_header.insert(btp_data_req_header.end(), ITS_AID_uint8[3]);
+    btp_data_req_header.insert(btp_data_req_header.end(), ITS_AID_uint8[2]);
+    btp_data_req_header.insert(btp_data_req_header.end(), ITS_AID_uint8[1]);
+    btp_data_req_header.insert(btp_data_req_header.end(), ITS_AID_uint8[0]);
+
+    // TODO changes (i think so):
+    // GN Security SSP Bits
+    btp_data_req_header.insert(btp_data_req_header.end(), static_cast<uint8_t>(0x01));  // GN Security SSP Bits
+    btp_data_req_header.insert(btp_data_req_header.end(), static_cast<uint8_t>(0xFF));  // GN Security SSP Bits
+    btp_data_req_header.insert(btp_data_req_header.end(), static_cast<uint8_t>(0xFC));  // GN Security SSP Bits
+    btp_data_req_header.insert(btp_data_req_header.end(), 29, static_cast<uint8_t>(0x00)); // GN Security SSP Bits offset
+
+    // Data lenght - Big endian
+    uint16_t data_lenght = static_cast<uint16_t>(data_size);
+    uint8_t *data_lenght_uint8 = reinterpret_cast<uint8_t *>(&data_lenght);
+    btp_data_req_header.insert(btp_data_req_header.end(), data_lenght_uint8[1]); // Data lenght MSB (header + data size)
+    btp_data_req_header.insert(btp_data_req_header.end(), data_lenght_uint8[0]); // Data lenght LSB (header + data size)
+
+    return btp_data_req_header;
+  }
+
   UdpPacket Converter::bufferToUdpPacketMessage(const uint8_t *buffer, const int size, const int btp_header_destination_port)
   {
 
     UdpPacket udp_msg;
 
-    bool cohda = true;
-
-    if (cohda)
+    if (has_btp_destination_port_)
     {
-
-      uint32_t ITS_AID;
-      uint8_t BTP_type;
-      uint8_t GN_packet_transport;
-      uint8_t GN_traffic_class;
-      uint8_t GN_security_profile = 1; // 0 = Security disabled
-                                       // 1 = Security enabled, SSP bitmap type
-                                       // 2 = Opaque type (e.g. used in the SAEM message)
-
-      switch (btp_header_destination_port)
+      //* Adding Cohda BTP Data Request Header
+      if (using_cohda_btp_headers_)
       {
-      case kBtpHeaderDestinationPortCam:                 // CAM
-        ITS_AID = 0x24;          // GN Security ITS-AID - CAM = 0x24
-        BTP_type = 2;            // BTP Type = 2 - BTP-B, used for CAM, DENM ...
-        GN_packet_transport = 7; // GN Packet Transport   = 7 - SingleHopBroadcast (SHB), used for CAM, SAEM
-        GN_traffic_class = 0x02; // GN Traffic Class   = 2 - CAM = 0x02 (DP3)
-        break;
-
-      case kBtpHeaderDestinationPortDenm: // DENM
-        RCLCPP_ERROR(this->get_logger(), "DENM not available yet!");
-        break;
-
-      case kBtpHeaderDestinationPortMapem: // MAP
-        RCLCPP_ERROR(this->get_logger(), "MAP not available yet!");
-        break;
-
-      case kBtpHeaderDestinationPortSpatem: // SPAT
-        RCLCPP_ERROR(this->get_logger(), "SPAT not available yet!");
-        break;
-
-      case kBtpHeaderDestinationPortIvi: // IVIM
-        RCLCPP_ERROR(this->get_logger(), "IVIM not available yet!");
-        break;
-
-      case kBtpHeaderDestinationPortCpmTs: // CPM
-        RCLCPP_ERROR(this->get_logger(), "CPM not available yet!");
-        break;
-
-      case kBtpHeaderDestinationPortVamTs: // VAM
-        RCLCPP_ERROR(this->get_logger(), "VAM not available yet!");
-        break;
-
-      case kBtpHeaderDestinationPortMcmUulm: // MCM
-        RCLCPP_ERROR(this->get_logger(), "MCM not available yet!");
-        break;
-
-      default:
-        RCLCPP_ERROR(this->get_logger(), "Unrecogonized destination port!");
-        break;
+        std::vector<uint8_t> btp_data_req_header = cohdaBtpDataRequestHeader(size, btp_header_destination_port);
+        udp_msg.data.insert(udp_msg.data.end(), btp_data_req_header.begin(), btp_data_req_header.end());
       }
-
-      // * Commom header
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(4)); // Version = 4
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0)); // Message ID = 1 - BTP Data Request
-
-      // Lenght - Big endian
-      uint16_t BTP_lenght = 70 + size;
-      uint8_t *BTP_lenght_uint8 = reinterpret_cast<uint8_t *>(&BTP_lenght);
-      udp_msg.data.insert(udp_msg.data.end(), BTP_lenght_uint8[1]); // BTP lenght MSB (header + data size)
-      udp_msg.data.insert(udp_msg.data.end(), BTP_lenght_uint8[0]); // BTP lenght LSB (header + data size)
-
-      //* BTP Data Request header
-
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(BTP_type)); // BTP Type = 2 - BTP-B, used for CAM, DENM ...
-
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(GN_packet_transport)); // GN Packet Transport   = 7 - SingleHopBroadcast (SHB), used for CAM, SAEM
-
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(GN_traffic_class)); // GN Traffic Class   = 2 - CAM = 0x02 (DP3)
-
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0)); // GGN Max Packet Lifetime     = 0 - use ItsGnMaxPacketLifetime parameter from .conf file.
-
-      // Port + Port info
-      uint16_t destination_port = htons(btp_header_destination_port);
-      uint16_t destination_port_info = 0;
-      uint16_t *btp_header = new uint16_t[2]{destination_port, destination_port_info};
-      uint8_t *btp_header_uint8 = reinterpret_cast<uint8_t *>(btp_header);
-      udp_msg.data.insert(udp_msg.data.end(), btp_header_uint8, btp_header_uint8 + 2 * sizeof(uint16_t));
-      delete[] btp_header;
-
-      // ? Fill with GNSS? -> Not for CAM.
-      udp_msg.data.insert(udp_msg.data.end(), 16, static_cast<uint8_t>(0)); // GN destination
-
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0));                   // GN Comms Profile - 0 = Default
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0));                   // GN Repeat Interval - 0 not supported yet
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(GN_security_profile)); // GN Security Profile
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(3));                   // GN Security SSPBits Length
-
-      // TODO changes:
-      uint8_t *ITS_AID_uint8 = reinterpret_cast<uint8_t *>(&ITS_AID);
-      udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[3]);
-      udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[2]);
-      udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[1]);
-      udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[0]);
-
-      // TODO changes (i think so):
-      // GN Security SSP Bits
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0x01));  // GN Security SSP Bits
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0xFF));  // GN Security SSP Bits
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0xFC));  // GN Security SSP Bits
-      udp_msg.data.insert(udp_msg.data.end(), 29, static_cast<uint8_t>(0)); // GN Security SSP Bits offset
-
-      // Data lenght - Big endian
-      uint16_t data_lenght = static_cast<uint16_t>(size);
-      uint8_t *data_lenght_uint8 = reinterpret_cast<uint8_t *>(&data_lenght);
-      udp_msg.data.insert(udp_msg.data.end(), data_lenght_uint8[1]); // Data lenght MSB (header + data size)
-      udp_msg.data.insert(udp_msg.data.end(), data_lenght_uint8[0]); // Data lenght LSB (header + data size)
-    }
-    else
-    {
-      if (has_btp_destination_port_)
+      else
       {
         // add BTP destination port and destination port info
         uint16_t destination_port = htons(btp_header_destination_port);
@@ -540,16 +559,8 @@ namespace etsi_its_conversion
 
     RCLCPP_WARN(this->get_logger(), "UDP package header size: %ld", udp_msg.data.size());
 
-    //* BTP payload
+    //* Adding BTP payload
     udp_msg.data.insert(udp_msg.data.end(), buffer, buffer + size);
-
-    // * Print UDP message in hex
-    // std::cout << std::endl;
-    // for (uint8_t byte : udp_msg.data)
-    // {
-    //   std::cout << std::hex << static_cast<int>(byte);
-    // }
-    // std::cout << std::endl;
 
     return udp_msg;
   }

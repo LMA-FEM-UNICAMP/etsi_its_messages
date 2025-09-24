@@ -27,6 +27,7 @@ SOFTWARE.
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include <etsi_its_cam_conversion/convertCAM.h>
 #include <etsi_its_cam_ts_conversion/convertCAM.h>
@@ -88,6 +89,8 @@ class Converter : public rclcpp::Node {
     template <typename T_ros, typename T_struct>
     bool decodeBufferToRosMessage(const uint8_t* buffer, const int size, const asn_TYPE_descriptor_t* type_descriptor, std::function<void(const T_struct&, T_ros&)> conversion_fn, T_ros& msg);
 
+    std::vector<uint8_t> cohdaBtpDataRequestHeader(const int data_size, const int btp_header_destination_port);
+
     UdpPacket bufferToUdpPacketMessage(const uint8_t* buffer, const int size, const int btp_header_destination_port);
 
     template <typename T_ros, typename T_struct>
@@ -130,6 +133,8 @@ class Converter : public rclcpp::Node {
 
     static const std::string kHasBtpDestinationPortParam;
     static const bool kHasBtpDestinationPortParamDefault;
+    static const std::string kUsingCohdaBtpHeaderParam;
+    static const bool kUsingCohdaBtpHeaderDefault;
     static const std::string kBtpDestinationPortOffsetParam;
     static const int kBtpDestinationPortOffsetParamDefault;
     static const std::string kEtsiMessagePayloadOffsetParam;
@@ -147,6 +152,7 @@ class Converter : public rclcpp::Node {
     static const bool kCheckConstraintsBeforeEncodingParamDefault;
 
     bool has_btp_destination_port_;
+    bool using_cohda_btp_headers_;
     int btp_destination_port_offset_;
     int etsi_message_payload_offset_;
     std::vector<std::string> ros2udp_etsi_types_;
