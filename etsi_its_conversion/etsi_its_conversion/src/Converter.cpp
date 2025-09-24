@@ -418,6 +418,56 @@ namespace etsi_its_conversion
     if (cohda)
     {
 
+      uint32_t ITS_AID;
+      uint8_t BTP_type;
+      uint8_t GN_packet_transport;
+      uint8_t GN_traffic_class;
+      uint8_t GN_security_profile = 1; // 0 = Security disabled
+                                       // 1 = Security enabled, SSP bitmap type
+                                       // 2 = Opaque type (e.g. used in the SAEM message)
+
+      switch (btp_header_destination_port)
+      {
+      case kBtpHeaderDestinationPortCam:                 // CAM
+        ITS_AID = 0x24;          // GN Security ITS-AID - CAM = 0x24
+        BTP_type = 2;            // BTP Type = 2 - BTP-B, used for CAM, DENM ...
+        GN_packet_transport = 7; // GN Packet Transport   = 7 - SingleHopBroadcast (SHB), used for CAM, SAEM
+        GN_traffic_class = 0x02; // GN Traffic Class   = 2 - CAM = 0x02 (DP3)
+        break;
+
+      case kBtpHeaderDestinationPortDenm: // DENM
+        RCLCPP_ERROR(this->get_logger(), "DENM not available yet!");
+        break;
+
+      case kBtpHeaderDestinationPortMapem: // MAP
+        RCLCPP_ERROR(this->get_logger(), "MAP not available yet!");
+        break;
+
+      case kBtpHeaderDestinationPortSpatem: // SPAT
+        RCLCPP_ERROR(this->get_logger(), "SPAT not available yet!");
+        break;
+
+      case kBtpHeaderDestinationPortIvi: // IVIM
+        RCLCPP_ERROR(this->get_logger(), "IVIM not available yet!");
+        break;
+
+      case kBtpHeaderDestinationPortCpmTs: // CPM
+        RCLCPP_ERROR(this->get_logger(), "CPM not available yet!");
+        break;
+
+      case kBtpHeaderDestinationPortVamTs: // VAM
+        RCLCPP_ERROR(this->get_logger(), "VAM not available yet!");
+        break;
+
+      case kBtpHeaderDestinationPortMcmUulm: // MCM
+        RCLCPP_ERROR(this->get_logger(), "MCM not available yet!");
+        break;
+
+      default:
+        RCLCPP_ERROR(this->get_logger(), "Unrecogonized destination port!");
+        break;
+      }
+
       // * Commom header
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(4)); // Version = 4
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0)); // Message ID = 1 - BTP Data Request
@@ -430,18 +480,14 @@ namespace etsi_its_conversion
 
       //* BTP Data Request header
 
-      // TODO changes:
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(2)); // BTP Type = 2 - BTP-B, used for CAM, DENM ...
+      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(BTP_type)); // BTP Type = 2 - BTP-B, used for CAM, DENM ...
 
-      // TODO changes:
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(7)); // GN Packet Transport   = 7 - SingleHopBroadcast (SHB), used for CAM, SAEM
+      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(GN_packet_transport)); // GN Packet Transport   = 7 - SingleHopBroadcast (SHB), used for CAM, SAEM
 
-      // TODO changes:
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(2)); // GN Traffic Class   = 2 - CAM = 0x02 (DP3)
+      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(GN_traffic_class)); // GN Traffic Class   = 2 - CAM = 0x02 (DP3)
 
       udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0)); // GGN Max Packet Lifetime     = 0 - use ItsGnMaxPacketLifetime parameter from .conf file.
 
-      // TODO changes:
       // Port + Port info
       uint16_t destination_port = htons(btp_header_destination_port);
       uint16_t destination_port_info = 0;
@@ -450,17 +496,15 @@ namespace etsi_its_conversion
       udp_msg.data.insert(udp_msg.data.end(), btp_header_uint8, btp_header_uint8 + 2 * sizeof(uint16_t));
       delete[] btp_header;
 
-
-      // ? Fill with GNSS?
+      // ? Fill with GNSS? -> Not for CAM.
       udp_msg.data.insert(udp_msg.data.end(), 16, static_cast<uint8_t>(0)); // GN destination
 
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(1)); // GN Comms Profile - 0 = Default
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(1)); // GN Repeat Interval - 0 not supported yet
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(1)); // GN Security Profile - 0 = Security disabled
-      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(3)); // GN Security SSPBits Length (Data Indication only)
+      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0));                   // GN Comms Profile - 0 = Default
+      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(0));                   // GN Repeat Interval - 0 not supported yet
+      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(GN_security_profile)); // GN Security Profile
+      udp_msg.data.insert(udp_msg.data.end(), static_cast<uint8_t>(3));                   // GN Security SSPBits Length
 
       // TODO changes:
-      uint32_t ITS_AID = 0x24; // GN Security ITS-AID - CAM = 0x24
       uint8_t *ITS_AID_uint8 = reinterpret_cast<uint8_t *>(&ITS_AID);
       udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[3]);
       udp_msg.data.insert(udp_msg.data.end(), ITS_AID_uint8[2]);
