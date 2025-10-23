@@ -84,7 +84,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         DeclareLaunchArgument("use_sim_time", default_value="false", description="use simulation time"),
-        DeclareLaunchArgument("lat", default_value="50.786750", description="reference position latitude (map frame)"),
-        DeclareLaunchArgument("lon", default_value="6.046295", description="reference position longitude (map frame)"),
+        DeclareLaunchArgument("lat", default_value="-22.8161782", description="reference position latitude (map frame)"),
+        DeclareLaunchArgument("lon", default_value="-47.066269899", description="reference position longitude (map frame)"),
         OpaqueFunction(function=generate_launch_description_with_resolved_launch_args)
     ])

@@ -34,6 +34,7 @@ namespace displays
     int zone;
     bool northp;
     geometry_msgs::msg::PointStamped p = etsi_its_cam_msgs::access::getUTMPosition(cam, zone, northp);
+    p.point.z = 0.0;
     header.frame_id = p.header.frame_id;
 
     uint64_t nanosecs = etsi_its_cam_msgs::access::getUnixNanosecondsFromGenerationDeltaTime(etsi_its_cam_msgs::access::getGenerationDeltaTime(cam), receive_time.nanoseconds(), n_leap_seconds);

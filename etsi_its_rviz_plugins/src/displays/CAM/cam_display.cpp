@@ -168,7 +168,7 @@ void CAMDisplay::update(float, float)
     transform_to_fixed_frame.header = pose_fixed_frame.header;
     transform_to_fixed_frame.transform.translation.x = pose_fixed_frame.pose.position.x;
     transform_to_fixed_frame.transform.translation.y = pose_fixed_frame.pose.position.y;
-    transform_to_fixed_frame.transform.translation.z = pose_fixed_frame.pose.position.z;
+    transform_to_fixed_frame.transform.translation.z = 0.0; //pose_fixed_frame.pose.position.z;
     transform_to_fixed_frame.transform.rotation = pose_fixed_frame.pose.orientation;
 
     setTransformOk();
