@@ -71,6 +71,11 @@ def generate_launch_description_with_resolved_launch_args(launch_context):
             executable="static_transform_publisher",
             arguments=["--frame-id", utm_frame_name, "--child-frame-id", "map", "--x", str(utm_x), "--y", str(utm_y), "--z", "0.0", "--roll", "0.0", "--pitch", "0.0", "--yaw", str(utm_conv_angle)],
         ),
+        Node(
+            package="tf2_ros",
+            executable="static_transform_publisher",
+            arguments=["--frame-id", utm_frame_name, "--child-frame-id", "vlp16_front", "--x", str(utm_x), "--y", str(utm_y), "--z", "1.55", "--roll", "0.0", "--pitch", "0.13", "--yaw", str(utm_conv_angle)],
+        ),
 
         # NavSatFix publisher for AerialMapDisplay
         ExecuteProcess(
