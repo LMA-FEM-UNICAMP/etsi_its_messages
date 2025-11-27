@@ -61,7 +61,7 @@ def generate_launch_description_with_resolved_launch_args(launch_context):
             executable="rviz2",
             name="rviz2",
             parameters=[{"use_sim_time": LaunchConfiguration("use_sim_time")}],
-            arguments=["-d", os.path.join(get_package_share_directory("etsi_its_rviz_plugins"), "config/demo.rviz")],
+            arguments=["-d", os.path.join(get_package_share_directory("etsi_its_rviz_plugins"), "config/v2x_panel.rviz")],
             output="screen",
         ),
 
