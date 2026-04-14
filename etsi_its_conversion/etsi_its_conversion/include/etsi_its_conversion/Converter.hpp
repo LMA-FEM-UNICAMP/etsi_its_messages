@@ -37,6 +37,8 @@ SOFTWARE.
 #include <etsi_its_mapem_ts_conversion/convertMAPEM.h>
 #include <etsi_its_mcm_uulm_conversion/convertMCM.h>
 #include <etsi_its_spatem_ts_conversion/convertSPATEM.h>
+#include <etsi_its_srem_ts_conversion/convertSREM.h>
+#include <etsi_its_ssem_ts_conversion/convertSSEM.h>
 #include <etsi_its_vam_ts_conversion/convertVAM.h>
 #include <etsi_its_cam_msgs/msg/cam.hpp>
 #include <etsi_its_cam_ts_msgs/msg/cam.hpp>
@@ -46,6 +48,8 @@ SOFTWARE.
 #include <etsi_its_mapem_ts_msgs/msg/mapem.hpp>
 #include <etsi_its_mcm_uulm_msgs/msg/mcm.hpp>
 #include <etsi_its_spatem_ts_msgs/msg/spatem.hpp>
+#include <etsi_its_srem_ts_msgs/msg/srem.hpp>
+#include <etsi_its_ssem_ts_msgs/msg/ssem.hpp>
 #include <etsi_its_vam_ts_msgs/msg/vam.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <udp_msgs/msg/udp_packet.hpp>
@@ -63,6 +67,8 @@ namespace denm_ts_msgs = etsi_its_denm_ts_msgs::msg;
 namespace mapem_ts_msgs = etsi_its_mapem_ts_msgs::msg;
 namespace mcm_uulm_msgs = etsi_its_mcm_uulm_msgs::msg;
 namespace spatem_ts_msgs = etsi_its_spatem_ts_msgs::msg;
+namespace srem_ts_msgs = etsi_its_srem_ts_msgs::msg;
+namespace ssem_ts_msgs = etsi_its_ssem_ts_msgs::msg;
 namespace vam_ts_msgs = etsi_its_vam_ts_msgs::msg;
 
 
@@ -128,6 +134,10 @@ class Converter : public rclcpp::Node {
     static const std::string kOutputTopicMcmUulm;
     static const std::string kInputTopicSpatemTs;
     static const std::string kOutputTopicSpatemTs;
+    static const std::string kInputTopicSremTs;
+    static const std::string kOutputTopicSremTs;
+    static const std::string kInputTopicSsemTs;
+    static const std::string kOutputTopicSsemTs;
     static const std::string kInputTopicVamTs;
     static const std::string kOutputTopicVamTs;
 
@@ -170,6 +180,8 @@ class Converter : public rclcpp::Node {
     rclcpp::Publisher<mapem_ts_msgs::MAPEM>::SharedPtr publisher_mapem_ts_;
     rclcpp::Publisher<mcm_uulm_msgs::MCM>::SharedPtr publisher_mcm_uulm_;
     rclcpp::Publisher<spatem_ts_msgs::SPATEM>::SharedPtr publisher_spatem_ts_;
+    rclcpp::Publisher<srem_ts_msgs::SREM>::SharedPtr publisher_srem_ts_;
+    rclcpp::Publisher<ssem_ts_msgs::SSEM>::SharedPtr publisher_ssem_ts_;
     rclcpp::Publisher<vam_ts_msgs::VAM>::SharedPtr publisher_vam_ts_;
     rclcpp::Publisher<UdpPacket>::SharedPtr publisher_udp_;
 

@@ -41,6 +41,8 @@ namespace etsi_its_conversion
   const int kBtpHeaderDestinationPortMapem{2003};
   const int kBtpHeaderDestinationPortSpatem{2004};
   const int kBtpHeaderDestinationPortIvi{2006};
+  const int kBtpHeaderDestinationPortSrem{2007};
+  const int kBtpHeaderDestinationPortSsem{2008};
   const int kBtpHeaderDestinationPortCpmTs{2009};
   const int kBtpHeaderDestinationPortVamTs{2018};
   const int kBtpHeaderDestinationPortMcmUulm{2020};
@@ -63,6 +65,10 @@ namespace etsi_its_conversion
   const std::string Converter::kOutputTopicMcmUulm{"~/mcm_uulm/out"};
   const std::string Converter::kInputTopicSpatemTs{"~/spatem_ts/in"};
   const std::string Converter::kOutputTopicSpatemTs{"~/spatem_ts/out"};
+  const std::string Converter::kInputTopicSremTs{"~/srem_ts/in"};
+  const std::string Converter::kOutputTopicSremTs{"~/srem_ts/out"};
+  const std::string Converter::kInputTopicSsemTs{"~/ssem_ts/in"};
+  const std::string Converter::kOutputTopicSsemTs{"~/ssem_ts/out"};
   const std::string Converter::kInputTopicVamTs{"~/vam_ts/in"};
   const std::string Converter::kOutputTopicVamTs{"~/vam_ts/out"};
 
@@ -325,6 +331,30 @@ namespace etsi_its_conversion
           std::bind(&Converter::rosCallback<spatem_ts_msgs::SPATEM, spatem_ts_SPATEM_t>, this, std::placeholders::_1, "spatem_ts", &asn_DEF_spatem_ts_SPATEM, std::function<void(const spatem_ts_msgs::SPATEM &, spatem_ts_SPATEM_t &)>(etsi_its_spatem_ts_conversion::toStruct_SPATEM));
       subscribers_["spatem_ts"] = this->create_subscription<spatem_ts_msgs::SPATEM>(kInputTopicSpatemTs, subscriber_queue_size_, callback);
       RCLCPP_INFO(this->get_logger(), "Converting native ROS SPATEMs (TS) on '%s' to UDP messages on '%s'", subscribers_["spatem_ts"]->get_topic_name(), publisher_udp_->get_topic_name());
+    }
+    if (std::find(udp2ros_etsi_types_.begin(), udp2ros_etsi_types_.end(), "srem_ts") != udp2ros_etsi_types_.end())
+    {
+      publisher_srem_ts_ = this->create_publisher<srem_ts_msgs::SREM>(kOutputTopicSremTs, publisher_queue_size_);
+      RCLCPP_INFO(this->get_logger(), "Converting UDP messages of type SREM (TS) on '%s' to native ROS messages on '%s'", subscriber_udp_->get_topic_name(), publisher_srem_ts_->get_topic_name());
+    }
+    if (std::find(ros2udp_etsi_types_.begin(), ros2udp_etsi_types_.end(), "srem_ts") != ros2udp_etsi_types_.end())
+    {
+      std::function<void(const srem_ts_msgs::SREM::UniquePtr)> callback =
+          std::bind(&Converter::rosCallback<srem_ts_msgs::SREM, srem_ts_SREM_t>, this, std::placeholders::_1, "srem_ts", &asn_DEF_srem_ts_SREM, std::function<void(const srem_ts_msgs::SREM &, srem_ts_SREM_t &)>(etsi_its_srem_ts_conversion::toStruct_SREM));
+      subscribers_["srem_ts"] = this->create_subscription<srem_ts_msgs::SREM>(kInputTopicSremTs, subscriber_queue_size_, callback);
+      RCLCPP_INFO(this->get_logger(), "Converting native ROS SREMs (TS) on '%s' to UDP messages on '%s'", subscribers_["srem_ts"]->get_topic_name(), publisher_udp_->get_topic_name());
+    }
+    if (std::find(udp2ros_etsi_types_.begin(), udp2ros_etsi_types_.end(), "ssem_ts") != udp2ros_etsi_types_.end())
+    {
+      publisher_ssem_ts_ = this->create_publisher<ssem_ts_msgs::SSEM>(kOutputTopicSsemTs, publisher_queue_size_);
+      RCLCPP_INFO(this->get_logger(), "Converting UDP messages of type SSEM (TS) on '%s' to native ROS messages on '%s'", subscriber_udp_->get_topic_name(), publisher_ssem_ts_->get_topic_name());
+    }
+    if (std::find(ros2udp_etsi_types_.begin(), ros2udp_etsi_types_.end(), "ssem_ts") != ros2udp_etsi_types_.end())
+    {
+      std::function<void(const ssem_ts_msgs::SSEM::UniquePtr)> callback =
+          std::bind(&Converter::rosCallback<ssem_ts_msgs::SSEM, ssem_ts_SSEM_t>, this, std::placeholders::_1, "ssem_ts", &asn_DEF_ssem_ts_SSEM, std::function<void(const ssem_ts_msgs::SSEM &, ssem_ts_SSEM_t &)>(etsi_its_ssem_ts_conversion::toStruct_SSEM));
+      subscribers_["ssem_ts"] = this->create_subscription<ssem_ts_msgs::SSEM>(kInputTopicSsemTs, subscriber_queue_size_, callback);
+      RCLCPP_INFO(this->get_logger(), "Converting native ROS SSEMs (TS) on '%s' to UDP messages on '%s'", subscribers_["ssem_ts"]->get_topic_name(), publisher_udp_->get_topic_name());
     }
     if (std::find(udp2ros_etsi_types_.begin(), udp2ros_etsi_types_.end(), "vam_ts") != udp2ros_etsi_types_.end())
     {
@@ -614,6 +644,10 @@ namespace etsi_its_conversion
         detected_etsi_type = "mcm_uulm";
       else if (destination_port == kBtpHeaderDestinationPortSpatem)
         detected_etsi_type = "spatem_ts";
+      else if (destination_port == kBtpHeaderDestinationPortSrem)
+        detected_etsi_type = "srem_ts";
+      else if (destination_port == kBtpHeaderDestinationPortSsem)
+        detected_etsi_type = "ssem_ts";
       else if (destination_port == kBtpHeaderDestinationPortVamTs)
         detected_etsi_type = "vam_ts";
       else
@@ -725,6 +759,30 @@ namespace etsi_its_conversion
       // publish msg
       publisher_spatem_ts_->publish(msg);
     }
+    else if (detected_etsi_type == "srem_ts")
+    {
+
+      // decode buffer to ROS msg
+      srem_ts_msgs::SREM msg;
+      bool success = this->decodeBufferToRosMessage(&udp_msg->data[etsi_message_payload_offset_], msg_size, &asn_DEF_srem_ts_SREM, std::function<void(const srem_ts_SREM_t &, srem_ts_msgs::SREM &)>(etsi_its_srem_ts_conversion::toRos_SREM), msg);
+      if (!success)
+        return;
+
+      // publish msg
+      publisher_srem_ts_->publish(msg);
+    }
+    else if (detected_etsi_type == "ssem_ts")
+    {
+
+      // decode buffer to ROS msg
+      ssem_ts_msgs::SSEM msg;
+      bool success = this->decodeBufferToRosMessage(&udp_msg->data[etsi_message_payload_offset_], msg_size, &asn_DEF_ssem_ts_SSEM, std::function<void(const ssem_ts_SSEM_t &, ssem_ts_msgs::SSEM &)>(etsi_its_ssem_ts_conversion::toRos_SSEM), msg);
+      if (!success)
+        return;
+
+      // publish msg
+      publisher_ssem_ts_->publish(msg);
+    }
     else
     {
       RCLCPP_ERROR(this->get_logger(), "Detected ETSI message type '%s' not yet supported, dropping message", detected_etsi_type.c_str());
@@ -754,6 +812,10 @@ namespace etsi_its_conversion
       btp_header_destination_port = kBtpHeaderDestinationPortMcmUulm;
     else if (type == "spatem_ts")
       btp_header_destination_port = kBtpHeaderDestinationPortSpatem;
+    else if (type == "srem_ts")
+      btp_header_destination_port = kBtpHeaderDestinationPortSrem;
+    else if (type == "ssem_ts")
+      btp_header_destination_port = kBtpHeaderDestinationPortSsem;
     else if (type == "vam_ts")
       btp_header_destination_port = kBtpHeaderDestinationPortVamTs;
 

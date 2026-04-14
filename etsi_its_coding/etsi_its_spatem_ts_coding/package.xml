@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package format="3">
 
-  <name>etsi_its_msgs</name>
+  <name>etsi_its_spatem_ts_coding</name>
   <version>3.3.0</version>
-  <description>ROS messages for ETSI ITS messages</description>
+  <description>C++ compatible C source code for ETSI ITS SPATEM (TS) generated from ASN.1 using asn1c</description>
 
   <maintainer email="jean-pierre.busch@rwth-aachen.de">Jean-Pierre Busch</maintainer>
   <maintainer email="guido.kueppers@rwth-aachen.de">Guido Küppers</maintainer>
@@ -15,17 +15,6 @@
 
   <license>MIT</license>
 
-  <depend>etsi_its_cam_msgs</depend>
-  <depend>etsi_its_cam_ts_msgs</depend>
-  <depend>etsi_its_cpm_ts_msgs</depend>
-  <depend>etsi_its_denm_msgs</depend>
-  <depend>etsi_its_denm_ts_msgs</depend>
-  <depend>etsi_its_mapem_ts_msgs</depend>
-  <depend>etsi_its_spatem_ts_msgs</depend>
-  <depend>etsi_its_vam_ts_msgs</depend>
-  <depend>etsi_its_srem_ts_msgs</depend>
-  <depend>etsi_its_ssem_ts_msgs</depend>
-  
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <export>

@@ -23,6 +23,8 @@
   <depend>etsi_its_mapem_ts_conversion</depend>
   <depend>etsi_its_mcm_uulm_conversion</depend>
   <depend>etsi_its_spatem_ts_conversion</depend>
+  <depend>etsi_its_srem_ts_conversion</depend>
+  <depend>etsi_its_ssem_ts_conversion</depend>
   <depend>etsi_its_vam_ts_conversion</depend>
   <depend>udp_msgs</depend>
 
