@@ -7,6 +7,9 @@
 
 #include "etsi_its_ssem_ts_coding/ssem_ts_RegionalExtension.h"
 
+
+#include "etsi_its_ssem_ts_coding/ssem_ts_ConnectionTrajectory-addGrpC.h"
+
 static const long asn_VAL_5_ssem_ts_addGrpC = 3;
 static const asn_ioc_cell_t asn_IOS_ssem_ts_Reg_MapData_1_rows[] = {
 	{ "&id", aioc__value, &asn_DEF_ssem_ts_RegionId, &asn_VAL_5_ssem_ts_addGrpC },

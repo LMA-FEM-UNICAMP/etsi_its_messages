@@ -20,7 +20,7 @@
 #include <etsi_its_srem_ts_coding/constr_CHOICE.h>
 #include <etsi_its_srem_ts_coding/constr_SEQUENCE.h>
 #include "etsi_its_srem_ts_coding/srem_ts_ConnectionManeuverAssist-addGrpC.h"
-#include "etsi_its_srem_ts_coding/srem_ts_ConnectionTrajectory-addGrpC.h"
+// #include "etsi_its_srem_ts_coding/srem_ts_ConnectionTrajectory-addGrpC.h"
 #include "etsi_its_srem_ts_coding/srem_ts_IntersectionState-addGrpC.h"
 #include "etsi_its_srem_ts_coding/srem_ts_LaneAttributes-addGrpC.h"
 #include "etsi_its_srem_ts_coding/srem_ts_MovementEvent-addGrpC.h"
@@ -29,6 +29,8 @@
 #include "etsi_its_srem_ts_coding/srem_ts_RequestorDescription-addGrpC.h"
 #include "etsi_its_srem_ts_coding/srem_ts_RestrictionUserType-addGrpC.h"
 #include "etsi_its_srem_ts_coding/srem_ts_SignalStatusPackage-addGrpC.h"
+
+typedef struct srem_ts_ConnectionTrajectory_addGrpC srem_ts_ConnectionTrajectory_addGrpC_t;
 
 #ifdef __cplusplus
 extern "C" {
@@ -264,7 +266,7 @@ typedef struct srem_ts_Reg_GenericLane {
 	struct srem_ts_Reg_GenericLane__regExtValue {
 		srem_ts_Reg_GenericLane__regExtValue_PR present;
 		union srem_ts_Reg_GenericLane__srem_ts_regExtValue_u {
-			srem_ts_ConnectionTrajectory_addGrpC_t	 ConnectionTrajectory_addGrpC;
+			srem_ts_ConnectionTrajectory_addGrpC_t	 *ConnectionTrajectory_addGrpC;
 		} choice;
 		
 		/* Context for parsing across buffer boundaries */

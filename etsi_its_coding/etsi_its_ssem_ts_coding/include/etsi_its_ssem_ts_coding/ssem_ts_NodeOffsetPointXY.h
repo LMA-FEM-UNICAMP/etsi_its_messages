@@ -19,12 +19,14 @@
 #include "etsi_its_ssem_ts_coding/ssem_ts_Node-XY-28b.h"
 #include "etsi_its_ssem_ts_coding/ssem_ts_Node-XY-32b.h"
 #include "etsi_its_ssem_ts_coding/ssem_ts_Node-LLmD-64b.h"
-#include "etsi_its_ssem_ts_coding/ssem_ts_RegionalExtension.h"
+// #include "etsi_its_ssem_ts_coding/ssem_ts_RegionalExtension.h"
 #include <etsi_its_ssem_ts_coding/constr_CHOICE.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef struct ssem_ts_Reg_NodeOffsetPointXY ssem_ts_Reg_NodeOffsetPointXY_t;
 
 /* Dependencies */
 typedef enum ssem_ts_NodeOffsetPointXY_PR {
@@ -50,7 +52,7 @@ typedef struct ssem_ts_NodeOffsetPointXY {
 		ssem_ts_Node_XY_28b_t	 node_XY5;
 		ssem_ts_Node_XY_32b_t	 node_XY6;
 		ssem_ts_Node_LLmD_64b_t	 node_LatLon;
-		ssem_ts_Reg_NodeOffsetPointXY_t	 regional;
+		ssem_ts_Reg_NodeOffsetPointXY_t	 *regional;
 	} choice;
 	
 	/* Context for parsing across buffer boundaries */

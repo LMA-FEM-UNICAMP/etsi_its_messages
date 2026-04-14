@@ -7,6 +7,8 @@
 
 #include "etsi_its_srem_ts_coding/srem_ts_NodeOffsetPointXY.h"
 
+#include "etsi_its_srem_ts_coding/srem_ts_RegionalExtension.h"
+
 #if !defined(ASN_DISABLE_UPER_SUPPORT) || !defined(ASN_DISABLE_APER_SUPPORT)
 asn_per_constraints_t asn_PER_type_srem_ts_NodeOffsetPointXY_constr_1 CC_NOTUSED = {
 	{ APC_CONSTRAINED,	 3,  3,  0,  7 }	/* (0..7) */,

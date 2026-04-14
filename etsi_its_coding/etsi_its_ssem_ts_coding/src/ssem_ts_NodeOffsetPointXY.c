@@ -158,7 +158,7 @@ asn_TYPE_member_t asn_MBR_ssem_ts_NodeOffsetPointXY_1[] = {
 	{ ATF_NOFLAGS, 0, offsetof(struct ssem_ts_NodeOffsetPointXY, choice.regional),
 		(ASN_TAG_CLASS_CONTEXT | (7 << 2)),
 		-1,	/* IMPLICIT tag at current level */
-		&asn_DEF_ssem_ts_Reg_NodeOffsetPointXY,
+		&asn_DEF_ssem_ts_NodeOffsetPointXY,
 		0,
 		{
 #if !defined(ASN_DISABLE_OER_SUPPORT)

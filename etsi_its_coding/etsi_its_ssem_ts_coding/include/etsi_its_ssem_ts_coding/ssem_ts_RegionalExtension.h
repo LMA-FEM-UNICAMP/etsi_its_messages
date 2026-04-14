@@ -20,7 +20,7 @@
 #include <etsi_its_ssem_ts_coding/constr_CHOICE.h>
 #include <etsi_its_ssem_ts_coding/constr_SEQUENCE.h>
 #include "etsi_its_ssem_ts_coding/ssem_ts_ConnectionManeuverAssist-addGrpC.h"
-#include "etsi_its_ssem_ts_coding/ssem_ts_ConnectionTrajectory-addGrpC.h"
+// #include "etsi_its_ssem_ts_coding/ssem_ts_ConnectionTrajectory-addGrpC.h"
 #include "etsi_its_ssem_ts_coding/ssem_ts_IntersectionState-addGrpC.h"
 #include "etsi_its_ssem_ts_coding/ssem_ts_LaneAttributes-addGrpC.h"
 #include "etsi_its_ssem_ts_coding/ssem_ts_MovementEvent-addGrpC.h"
@@ -33,6 +33,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef struct ssem_ts_ConnectionTrajectory_addGrpC ssem_ts_ConnectionTrajectory_addGrpC_t;
 
 /* Dependencies */
 typedef enum ssem_ts_Reg_MapData__regExtValue_PR {
@@ -264,7 +266,7 @@ typedef struct ssem_ts_Reg_GenericLane {
 	struct ssem_ts_Reg_GenericLane__regExtValue {
 		ssem_ts_Reg_GenericLane__regExtValue_PR present;
 		union ssem_ts_Reg_GenericLane__ssem_ts_regExtValue_u {
-			ssem_ts_ConnectionTrajectory_addGrpC_t	 ConnectionTrajectory_addGrpC;
+			ssem_ts_ConnectionTrajectory_addGrpC_t	 *ConnectionTrajectory_addGrpC;
 		} choice;
 		
 		/* Context for parsing across buffer boundaries */
