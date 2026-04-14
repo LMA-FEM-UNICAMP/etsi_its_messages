@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SREM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
+  etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
   -t \
-  srem
+  srem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -40,21 +42,21 @@ DescriptiveName ::= IA5String (SIZE(1..63))
 
 #pragma once
 
-#include <etsi_its_srem_coding/srem_DescriptiveName.h>
-#include <etsi_its_srem_coding/IA5String.h>
+#include <etsi_its_srem_ts_coding/srem_ts_DescriptiveName.h>
+#include <etsi_its_srem_ts_coding/IA5String.h>
 #include <etsi_its_primitives_conversion/convertIA5String.h>
-#include <etsi_its_srem_msgs/msg/descriptive_name.hpp>
-namespace srem_msgs = etsi_its_srem_msgs::msg;
+#include <etsi_its_srem_ts_msgs/msg/descriptive_name.hpp>
+namespace srem_ts_msgs = etsi_its_srem_ts_msgs::msg;
 
 
-namespace etsi_its_srem_conversion {
+namespace etsi_its_srem_ts_conversion {
 
-void toRos_DescriptiveName(const srem_DescriptiveName_t& in, srem_msgs::DescriptiveName& out) {
+void toRos_DescriptiveName(const srem_ts_DescriptiveName_t& in, srem_ts_msgs::DescriptiveName& out) {
   etsi_its_primitives_conversion::toRos_IA5String(in, out.value);
 }
 
-void toStruct_DescriptiveName(const srem_msgs::DescriptiveName& in, srem_DescriptiveName_t& out) {
-  memset(&out, 0, sizeof(srem_DescriptiveName_t));
+void toStruct_DescriptiveName(const srem_ts_msgs::DescriptiveName& in, srem_ts_DescriptiveName_t& out) {
+  memset(&out, 0, sizeof(srem_ts_DescriptiveName_t));
   etsi_its_primitives_conversion::toStruct_IA5String(in.value, out);
 }
 

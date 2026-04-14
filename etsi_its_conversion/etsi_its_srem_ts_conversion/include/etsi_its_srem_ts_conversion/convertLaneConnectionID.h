@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SREM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
+  etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
   -t \
-  srem
+  srem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -40,21 +42,21 @@ LaneConnectionID ::= INTEGER (0..255)
 
 #pragma once
 
-#include <etsi_its_srem_coding/srem_LaneConnectionID.h>
-#include <etsi_its_srem_coding/INTEGER.h>
+#include <etsi_its_srem_ts_coding/srem_ts_LaneConnectionID.h>
+#include <etsi_its_srem_ts_coding/INTEGER.h>
 #include <etsi_its_primitives_conversion/convertINTEGER.h>
-#include <etsi_its_srem_msgs/msg/lane_connection_id.hpp>
-namespace srem_msgs = etsi_its_srem_msgs::msg;
+#include <etsi_its_srem_ts_msgs/msg/lane_connection_id.hpp>
+namespace srem_ts_msgs = etsi_its_srem_ts_msgs::msg;
 
 
-namespace etsi_its_srem_conversion {
+namespace etsi_its_srem_ts_conversion {
 
-void toRos_LaneConnectionID(const srem_LaneConnectionID_t& in, srem_msgs::LaneConnectionID& out) {
+void toRos_LaneConnectionID(const srem_ts_LaneConnectionID_t& in, srem_ts_msgs::LaneConnectionID& out) {
   etsi_its_primitives_conversion::toRos_INTEGER(in, out.value);
 }
 
-void toStruct_LaneConnectionID(const srem_msgs::LaneConnectionID& in, srem_LaneConnectionID_t& out) {
-  memset(&out, 0, sizeof(srem_LaneConnectionID_t));
+void toStruct_LaneConnectionID(const srem_ts_msgs::LaneConnectionID& in, srem_ts_LaneConnectionID_t& out) {
+  memset(&out, 0, sizeof(srem_ts_LaneConnectionID_t));
   etsi_its_primitives_conversion::toStruct_INTEGER(in.value, out);
 }
 

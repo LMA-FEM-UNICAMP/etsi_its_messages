@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SREM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
+  etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
   -t \
-  srem
+  srem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -47,19 +49,19 @@ SignalRequestMessage ::= SEQUENCE {
 
 #pragma once
 
-#include <etsi_its_srem_coding/srem_SignalRequestMessage.h>
-#include <etsi_its_srem_conversion/convertDSecond.h>
-#include <etsi_its_srem_conversion/convertMinuteOfTheYear.h>
-#include <etsi_its_srem_conversion/convertMsgCount.h>
-#include <etsi_its_srem_conversion/convertRequestorDescription.h>
-#include <etsi_its_srem_conversion/convertSignalRequestList.h>
-#include <etsi_its_srem_msgs/msg/signal_request_message.hpp>
-namespace srem_msgs = etsi_its_srem_msgs::msg;
+#include <etsi_its_srem_ts_coding/srem_ts_SignalRequestMessage.h>
+#include <etsi_its_srem_ts_conversion/convertDSecond.h>
+#include <etsi_its_srem_ts_conversion/convertMinuteOfTheYear.h>
+#include <etsi_its_srem_ts_conversion/convertMsgCount.h>
+#include <etsi_its_srem_ts_conversion/convertRequestorDescription.h>
+#include <etsi_its_srem_ts_conversion/convertSignalRequestList.h>
+#include <etsi_its_srem_ts_msgs/msg/signal_request_message.hpp>
+namespace srem_ts_msgs = etsi_its_srem_ts_msgs::msg;
 
 
-namespace etsi_its_srem_conversion {
+namespace etsi_its_srem_ts_conversion {
 
-void toRos_SignalRequestMessage(const srem_SignalRequestMessage_t& in, srem_msgs::SignalRequestMessage& out) {
+void toRos_SignalRequestMessage(const srem_ts_SignalRequestMessage_t& in, srem_ts_msgs::SignalRequestMessage& out) {
   if (in.timeStamp) {
     toRos_MinuteOfTheYear(*in.timeStamp, out.time_stamp);
     out.time_stamp_is_present = true;
@@ -76,19 +78,19 @@ void toRos_SignalRequestMessage(const srem_SignalRequestMessage_t& in, srem_msgs
   toRos_RequestorDescription(in.requestor, out.requestor);
 }
 
-void toStruct_SignalRequestMessage(const srem_msgs::SignalRequestMessage& in, srem_SignalRequestMessage_t& out) {
-  memset(&out, 0, sizeof(srem_SignalRequestMessage_t));
+void toStruct_SignalRequestMessage(const srem_ts_msgs::SignalRequestMessage& in, srem_ts_SignalRequestMessage_t& out) {
+  memset(&out, 0, sizeof(srem_ts_SignalRequestMessage_t));
   if (in.time_stamp_is_present) {
-    out.timeStamp = (srem_MinuteOfTheYear_t*) calloc(1, sizeof(srem_MinuteOfTheYear_t));
+    out.timeStamp = (srem_ts_MinuteOfTheYear_t*) calloc(1, sizeof(srem_ts_MinuteOfTheYear_t));
     toStruct_MinuteOfTheYear(in.time_stamp, *out.timeStamp);
   }
   toStruct_DSecond(in.second, out.second);
   if (in.sequence_number_is_present) {
-    out.sequenceNumber = (srem_MsgCount_t*) calloc(1, sizeof(srem_MsgCount_t));
+    out.sequenceNumber = (srem_ts_MsgCount_t*) calloc(1, sizeof(srem_ts_MsgCount_t));
     toStruct_MsgCount(in.sequence_number, *out.sequenceNumber);
   }
   if (in.requests_is_present) {
-    out.requests = (srem_SignalRequestList_t*) calloc(1, sizeof(srem_SignalRequestList_t));
+    out.requests = (srem_ts_SignalRequestList_t*) calloc(1, sizeof(srem_ts_SignalRequestList_t));
     toStruct_SignalRequestList(in.requests, *out.requests);
   }
   toStruct_RequestorDescription(in.requestor, out.requestor);

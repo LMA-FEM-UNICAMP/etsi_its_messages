@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SSEM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_ssem_ts_conversion/include/etsi_its_ssem_ts_conversion/ \
+  etsi_its_conversion/etsi_its_ssem_ts_conversion/include/etsi_its_ssem_ts_conversion \
   -t \
-  ssem
+  ssem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -42,29 +44,29 @@ SignalStatusPackageList ::= SEQUENCE (SIZE(1..32)) OF SignalStatusPackage
 
 #include <stdexcept>
 
-#include <etsi_its_ssem_coding/asn_SEQUENCE_OF.h>
-#include <etsi_its_ssem_coding/ssem_SignalStatusPackageList.h>
-#include <etsi_its_ssem_coding/ssem_SignalStatusPackage.h>
-#include <etsi_its_ssem_conversion/convertSignalStatusPackage.h>
-#include <etsi_its_ssem_msgs/msg/signal_status_package.hpp>
-#include <etsi_its_ssem_msgs/msg/signal_status_package_list.hpp>
-namespace ssem_msgs = etsi_its_ssem_msgs::msg;
+#include <etsi_its_ssem_ts_coding/asn_SEQUENCE_OF.h>
+#include <etsi_its_ssem_ts_coding/ssem_ts_SignalStatusPackageList.h>
+#include <etsi_its_ssem_ts_coding/ssem_ts_SignalStatusPackage.h>
+#include <etsi_its_ssem_ts_conversion/convertSignalStatusPackage.h>
+#include <etsi_its_ssem_ts_msgs/msg/signal_status_package.hpp>
+#include <etsi_its_ssem_ts_msgs/msg/signal_status_package_list.hpp>
+namespace ssem_ts_msgs = etsi_its_ssem_ts_msgs::msg;
 
 
-namespace etsi_its_ssem_conversion {
+namespace etsi_its_ssem_ts_conversion {
 
-void toRos_SignalStatusPackageList(const ssem_SignalStatusPackageList_t& in, ssem_msgs::SignalStatusPackageList& out) {
+void toRos_SignalStatusPackageList(const ssem_ts_SignalStatusPackageList_t& in, ssem_ts_msgs::SignalStatusPackageList& out) {
   for (int i = 0; i < in.list.count; ++i) {
-    ssem_msgs::SignalStatusPackage el;
+    ssem_ts_msgs::SignalStatusPackage el;
     toRos_SignalStatusPackage(*(in.list.array[i]), el);
     out.array.push_back(el);
   }
 }
 
-void toStruct_SignalStatusPackageList(const ssem_msgs::SignalStatusPackageList& in, ssem_SignalStatusPackageList_t& out) {
-  memset(&out, 0, sizeof(ssem_SignalStatusPackageList_t));
+void toStruct_SignalStatusPackageList(const ssem_ts_msgs::SignalStatusPackageList& in, ssem_ts_SignalStatusPackageList_t& out) {
+  memset(&out, 0, sizeof(ssem_ts_SignalStatusPackageList_t));
   for (int i = 0; i < in.array.size(); ++i) {
-    ssem_SignalStatusPackage_t* el = (ssem_SignalStatusPackage_t*) calloc(1, sizeof(ssem_SignalStatusPackage_t));
+    ssem_ts_SignalStatusPackage_t* el = (ssem_ts_SignalStatusPackage_t*) calloc(1, sizeof(ssem_ts_SignalStatusPackage_t));
     toStruct_SignalStatusPackage(in.array[i], *el);
     if (asn_sequence_add(&out, el)) throw std::invalid_argument("Failed to add to A_SEQUENCE_OF");
   }

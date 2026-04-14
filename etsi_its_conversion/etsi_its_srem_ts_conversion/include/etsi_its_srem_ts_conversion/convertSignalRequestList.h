@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SREM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
+  etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
   -t \
-  srem
+  srem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -42,29 +44,29 @@ SignalRequestList ::= SEQUENCE (SIZE(1..32)) OF SignalRequestPackage
 
 #include <stdexcept>
 
-#include <etsi_its_srem_coding/asn_SEQUENCE_OF.h>
-#include <etsi_its_srem_coding/srem_SignalRequestList.h>
-#include <etsi_its_srem_coding/srem_SignalRequestPackage.h>
-#include <etsi_its_srem_conversion/convertSignalRequestPackage.h>
-#include <etsi_its_srem_msgs/msg/signal_request_package.hpp>
-#include <etsi_its_srem_msgs/msg/signal_request_list.hpp>
-namespace srem_msgs = etsi_its_srem_msgs::msg;
+#include <etsi_its_srem_ts_coding/asn_SEQUENCE_OF.h>
+#include <etsi_its_srem_ts_coding/srem_ts_SignalRequestList.h>
+#include <etsi_its_srem_ts_coding/srem_ts_SignalRequestPackage.h>
+#include <etsi_its_srem_ts_conversion/convertSignalRequestPackage.h>
+#include <etsi_its_srem_ts_msgs/msg/signal_request_package.hpp>
+#include <etsi_its_srem_ts_msgs/msg/signal_request_list.hpp>
+namespace srem_ts_msgs = etsi_its_srem_ts_msgs::msg;
 
 
-namespace etsi_its_srem_conversion {
+namespace etsi_its_srem_ts_conversion {
 
-void toRos_SignalRequestList(const srem_SignalRequestList_t& in, srem_msgs::SignalRequestList& out) {
+void toRos_SignalRequestList(const srem_ts_SignalRequestList_t& in, srem_ts_msgs::SignalRequestList& out) {
   for (int i = 0; i < in.list.count; ++i) {
-    srem_msgs::SignalRequestPackage el;
+    srem_ts_msgs::SignalRequestPackage el;
     toRos_SignalRequestPackage(*(in.list.array[i]), el);
     out.array.push_back(el);
   }
 }
 
-void toStruct_SignalRequestList(const srem_msgs::SignalRequestList& in, srem_SignalRequestList_t& out) {
-  memset(&out, 0, sizeof(srem_SignalRequestList_t));
+void toStruct_SignalRequestList(const srem_ts_msgs::SignalRequestList& in, srem_ts_SignalRequestList_t& out) {
+  memset(&out, 0, sizeof(srem_ts_SignalRequestList_t));
   for (int i = 0; i < in.array.size(); ++i) {
-    srem_SignalRequestPackage_t* el = (srem_SignalRequestPackage_t*) calloc(1, sizeof(srem_SignalRequestPackage_t));
+    srem_ts_SignalRequestPackage_t* el = (srem_ts_SignalRequestPackage_t*) calloc(1, sizeof(srem_ts_SignalRequestPackage_t));
     toStruct_SignalRequestPackage(in.array[i], *el);
     if (asn_sequence_add(&out, el)) throw std::invalid_argument("Failed to add to A_SEQUENCE_OF");
   }

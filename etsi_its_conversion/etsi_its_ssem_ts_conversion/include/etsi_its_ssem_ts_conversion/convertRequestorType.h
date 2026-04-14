@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SSEM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_ssem_ts_conversion/include/etsi_its_ssem_ts_conversion/ \
+  etsi_its_conversion/etsi_its_ssem_ts_conversion/include/etsi_its_ssem_ts_conversion \
   -t \
-  ssem
+  ssem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -46,19 +48,19 @@ RequestorType ::= SEQUENCE {
 
 #pragma once
 
-#include <etsi_its_ssem_coding/ssem_RequestorType.h>
-#include <etsi_its_ssem_conversion/convertBasicVehicleRole.h>
-#include <etsi_its_ssem_conversion/convertIso3833VehicleType.h>
-#include <etsi_its_ssem_conversion/convertRequestImportanceLevel.h>
-#include <etsi_its_ssem_conversion/convertRequestSubRole.h>
-#include <etsi_its_ssem_conversion/convertVehicleType.h>
-#include <etsi_its_ssem_msgs/msg/requestor_type.hpp>
-namespace ssem_msgs = etsi_its_ssem_msgs::msg;
+#include <etsi_its_ssem_ts_coding/ssem_ts_RequestorType.h>
+#include <etsi_its_ssem_ts_conversion/convertBasicVehicleRole.h>
+#include <etsi_its_ssem_ts_conversion/convertIso3833VehicleType.h>
+#include <etsi_its_ssem_ts_conversion/convertRequestImportanceLevel.h>
+#include <etsi_its_ssem_ts_conversion/convertRequestSubRole.h>
+#include <etsi_its_ssem_ts_conversion/convertVehicleType.h>
+#include <etsi_its_ssem_ts_msgs/msg/requestor_type.hpp>
+namespace ssem_ts_msgs = etsi_its_ssem_ts_msgs::msg;
 
 
-namespace etsi_its_ssem_conversion {
+namespace etsi_its_ssem_ts_conversion {
 
-void toRos_RequestorType(const ssem_RequestorType_t& in, ssem_msgs::RequestorType& out) {
+void toRos_RequestorType(const ssem_ts_RequestorType_t& in, ssem_ts_msgs::RequestorType& out) {
   toRos_BasicVehicleRole(in.role, out.role);
   if (in.subrole) {
     toRos_RequestSubRole(*in.subrole, out.subrole);
@@ -78,23 +80,23 @@ void toRos_RequestorType(const ssem_RequestorType_t& in, ssem_msgs::RequestorTyp
   }
 }
 
-void toStruct_RequestorType(const ssem_msgs::RequestorType& in, ssem_RequestorType_t& out) {
-  memset(&out, 0, sizeof(ssem_RequestorType_t));
+void toStruct_RequestorType(const ssem_ts_msgs::RequestorType& in, ssem_ts_RequestorType_t& out) {
+  memset(&out, 0, sizeof(ssem_ts_RequestorType_t));
   toStruct_BasicVehicleRole(in.role, out.role);
   if (in.subrole_is_present) {
-    out.subrole = (ssem_RequestSubRole_t*) calloc(1, sizeof(ssem_RequestSubRole_t));
+    out.subrole = (ssem_ts_RequestSubRole_t*) calloc(1, sizeof(ssem_ts_RequestSubRole_t));
     toStruct_RequestSubRole(in.subrole, *out.subrole);
   }
   if (in.request_is_present) {
-    out.request = (ssem_RequestImportanceLevel_t*) calloc(1, sizeof(ssem_RequestImportanceLevel_t));
+    out.request = (ssem_ts_RequestImportanceLevel_t*) calloc(1, sizeof(ssem_ts_RequestImportanceLevel_t));
     toStruct_RequestImportanceLevel(in.request, *out.request);
   }
   if (in.iso3883_is_present) {
-    out.iso3883 = (ssem_Iso3833VehicleType_t*) calloc(1, sizeof(ssem_Iso3833VehicleType_t));
+    out.iso3883 = (ssem_ts_Iso3833VehicleType_t*) calloc(1, sizeof(ssem_ts_Iso3833VehicleType_t));
     toStruct_Iso3833VehicleType(in.iso3883, *out.iso3883);
   }
   if (in.hpms_type_is_present) {
-    out.hpmsType = (ssem_VehicleType_t*) calloc(1, sizeof(ssem_VehicleType_t));
+    out.hpmsType = (ssem_ts_VehicleType_t*) calloc(1, sizeof(ssem_ts_VehicleType_t));
     toStruct_VehicleType(in.hpms_type, *out.hpmsType);
   }
 }

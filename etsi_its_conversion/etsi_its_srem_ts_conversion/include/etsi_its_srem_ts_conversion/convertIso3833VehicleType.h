@@ -27,76 +27,78 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SREM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
+  etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
   -t \
-  srem
+  srem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
 Iso3833VehicleType ::= INTEGER {
-    passengerCar                 (0),
-    saloon                       (1),	
-    convertibleSaloon            (2),	
-    pullmanSaloon                (3),	
-    stationWagon                 (4),	
-    truckStationWagon            (5),	
-    coupe                        (6),
-    convertible                  (7),	
-    multipurposePassengerCar     (8),	
-    forwardControlPassengerCar   (9),	
-    specialPassengerCar	         (10),
-    bus	                         (11),
-    minibus                      (12),	
-    urbanBus                     (13),	
-    interurbanCoach              (14),	
-    longDistanceCoach            (15),	
-    articulatedBus               (16),	
-    trolleyBus                   (17),
-    specialBus                   (18),	
-    commercialVehicle            (19),	
-    specialCommercialVehicle     (20),
-    specialVehicle               (21),	
-    trailingTowingVehicle        (22),	
-    semiTrailerTowingVehicle     (23),	
-    trailer                      (24),	
-    busTrailer                   (25),
-    generalPurposeTrailer        (26),
-    caravan                      (27),	
-    specialTrailer               (28),	
-    semiTrailer	                 (29),	
-    busSemiTrailer               (30),	
-    generalPurposeSemiTrailer    (31),
-    specialSemiTrailer           (32),	
-    roadTrain                    (33),	
-    passengerRoadTrain           (34),	
-    articulatedRoadTrain         (35),	
-    doubleRoadTrain	             (36),
-    compositeRoadTrain           (37),	
-    specialRoadTrain             (38),	
-    moped                        (39),	
-    motorCycle                   (40)	
-	} (0..255)
+  passengerCar	(0),	-- term No 3.1.1
+  saloon	(1),	-- term No 3.1.1.1 (sedan)
+  convertibleSaloon	(2),	-- term No 3.1.1.2
+  pullmanSaloon	(3),	-- term No 3.1.1.3
+  stationWagon	(4),	-- term No 3.1.1.4
+  truckStationWagon	(5),	-- term No 3.1.1.4.1
+  coupe	(6),	-- term No 3.1.1.5 (coup�)
+  convertible	(7),	-- term No 3.1.1.6 (open tourer, roadstar, spider)
+  multipurposePassengerCar	(8),	-- term No 3.1.1.7
+  forwardControlPassengerCar	(9),	-- term No 3.1.1.8
+  specialPassengerCar	(10),	-- term No 3.1.1.9
+  bus	(11),	-- term No 3.1.2
+  minibus	(12),	-- term No 3.1.2.1
+  urbanBus	(13),	-- term No 3.1.2.2
+  interurbanCoach	(14),	-- term No 3.1.2.3
+  longDistanceCoach	(15),	-- term No 3.1.2.4
+  articulatedBus	(16),	-- term No 3.1.2.5
+  trolleyBus	(17),	-- term No 3.1.2.6
+  specialBus	(18),	-- term No 3.1.2.7
+  commercialVehicle	(19),	-- term No 3.1.3
+  specialCommercialVehicle	(20),	-- term No 3.1.3.1
+  specialVehicle	(21),	-- term No 3.1.4
+  trailingTowingVehicle	(22),	-- term No 3.1.5 (draw-bar tractor)
+  semiTrailerTowingVehicle	(23),	-- term No 3.1.6 (fifth wheel tractor)
+  trailer	(24),	-- term No 3.2.1
+  busTrailer	(25),	-- term No 3.2.1.1
+  generalPurposeTrailer	(26),	-- term No 3.2.1.2
+  caravan	(27),	-- term No 3.2.1.3
+  specialTrailer	(28),	-- term No 3.2.1.4
+  semiTrailer	(29),	-- term No 3.2.2
+  busSemiTrailer	(30),	-- term No 3.2.2.1
+  generalPurposeSemiTrailer	(31),	-- term No 3.2.2.2
+  specialSemiTrailer	(32),	-- term No 3.2.2.3
+  roadTrain	(33),	-- term No 3.3.1
+  passengerRoadTrain	(34),	-- term No 3.3.2
+  articulatedRoadTrain	(35),	-- term No 3.3.3
+  doubleRoadTrain	(36),	-- term No 3.3.4
+  compositeRoadTrain	(37),	-- term No 3.3.5
+  specialRoadTrain	(38),	-- term No 3.3.6
+  moped	(39),	-- term No 3.4
+  motorCycle	(40)	-- term No 3.5
+  } (0..255)
 ----------------------------------------------------------------------------- */
 
 #pragma once
 
-#include <etsi_its_srem_coding/srem_Iso3833VehicleType.h>
-#include <etsi_its_srem_coding/INTEGER.h>
+#include <etsi_its_srem_ts_coding/srem_ts_Iso3833VehicleType.h>
+#include <etsi_its_srem_ts_coding/INTEGER.h>
 #include <etsi_its_primitives_conversion/convertINTEGER.h>
-#include <etsi_its_srem_msgs/msg/iso3833_vehicle_type.hpp>
-namespace srem_msgs = etsi_its_srem_msgs::msg;
+#include <etsi_its_srem_ts_msgs/msg/iso3833_vehicle_type.hpp>
+namespace srem_ts_msgs = etsi_its_srem_ts_msgs::msg;
 
 
-namespace etsi_its_srem_conversion {
+namespace etsi_its_srem_ts_conversion {
 
-void toRos_Iso3833VehicleType(const srem_Iso3833VehicleType_t& in, srem_msgs::Iso3833VehicleType& out) {
+void toRos_Iso3833VehicleType(const srem_ts_Iso3833VehicleType_t& in, srem_ts_msgs::Iso3833VehicleType& out) {
   etsi_its_primitives_conversion::toRos_INTEGER(in, out.value);
 }
 
-void toStruct_Iso3833VehicleType(const srem_msgs::Iso3833VehicleType& in, srem_Iso3833VehicleType_t& out) {
-  memset(&out, 0, sizeof(srem_Iso3833VehicleType_t));
+void toStruct_Iso3833VehicleType(const srem_ts_msgs::Iso3833VehicleType& in, srem_ts_Iso3833VehicleType_t& out) {
+  memset(&out, 0, sizeof(srem_ts_Iso3833VehicleType_t));
   etsi_its_primitives_conversion::toStruct_INTEGER(in.value, out);
 }
 

@@ -27,52 +27,46 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SSEM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_ssem_ts_conversion/include/etsi_its_ssem_ts_conversion/ \
+  etsi_its_conversion/etsi_its_ssem_ts_conversion/include/etsi_its_ssem_ts_conversion \
   -t \
-  ssem
+  ssem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
-*
-* Signal status extended Message
-* 
-* This DF includes DEs for the SSEM: protocolVersion, the SSEM message type identifier `messageID` and
-* the station identifier `stationID` of the originating ITS-S and the signal status data from ETSI-ITS-DSRC.
-*
-* @field header: The DE `protocolVersion` is used to select the appropriate protocol decoder at the receiving ITS-S. 
-*                It shall be set to 2.
-*                The DE `messageID` shall be ssem(10).
-* @field ssm:    contains the Signal status data as defined in ETSI-ITS-DSRC.
-* 
-* @category: Basic Information
-* @revision: V1.3.1
-*
 SSEM ::= SEQUENCE {
+    -- @details header
+    -- The DE _protocolVersion_ is used to select the appropriate protocol decoder at the receiving ITS-S.
+    --   It shall be set to 2.
+    -- The DE _messageID_ shall be ssem(10).
     header  ItsPduHeader,
+    -- @details ssm
+    -- The DE _ssm_ contains the Signal status data as defined in ISO TS 19091.
     ssm     SignalStatusMessage
 }
 ----------------------------------------------------------------------------- */
 
 #pragma once
 
-#include <etsi_its_ssem_coding/ssem_SSEM.h>
-#include <etsi_its_ssem_conversion/convertItsPduHeader.h>
-#include <etsi_its_ssem_conversion/convertSignalStatusMessage.h>
-#include <etsi_its_ssem_msgs/msg/ssem.hpp>
-namespace ssem_msgs = etsi_its_ssem_msgs::msg;
+#include <etsi_its_ssem_ts_coding/ssem_ts_SSEM.h>
+#include <etsi_its_ssem_ts_conversion/convertItsPduHeader.h>
+#include <etsi_its_ssem_ts_conversion/convertSignalStatusMessage.h>
+#include <etsi_its_ssem_ts_msgs/msg/ssem.hpp>
+namespace ssem_ts_msgs = etsi_its_ssem_ts_msgs::msg;
 
 
-namespace etsi_its_ssem_conversion {
+namespace etsi_its_ssem_ts_conversion {
 
-void toRos_SSEM(const ssem_SSEM_t& in, ssem_msgs::SSEM& out) {
+void toRos_SSEM(const ssem_ts_SSEM_t& in, ssem_ts_msgs::SSEM& out) {
   toRos_ItsPduHeader(in.header, out.header);
   toRos_SignalStatusMessage(in.ssm, out.ssm);
 }
 
-void toStruct_SSEM(const ssem_msgs::SSEM& in, ssem_SSEM_t& out) {
-  memset(&out, 0, sizeof(ssem_SSEM_t));
+void toStruct_SSEM(const ssem_ts_msgs::SSEM& in, ssem_ts_SSEM_t& out) {
+  memset(&out, 0, sizeof(ssem_ts_SSEM_t));
   toStruct_ItsPduHeader(in.header, out.header);
   toStruct_SignalStatusMessage(in.ssm, out.ssm);
 }

@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SREM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
+  etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
   -t \
-  srem
+  srem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -47,18 +49,18 @@ SignalRequest ::= SEQUENCE {
 
 #pragma once
 
-#include <etsi_its_srem_coding/srem_SignalRequest.h>
-#include <etsi_its_srem_conversion/convertIntersectionAccessPoint.h>
-#include <etsi_its_srem_conversion/convertIntersectionReferenceID.h>
-#include <etsi_its_srem_conversion/convertPriorityRequestType.h>
-#include <etsi_its_srem_conversion/convertRequestID.h>
-#include <etsi_its_srem_msgs/msg/signal_request.hpp>
-namespace srem_msgs = etsi_its_srem_msgs::msg;
+#include <etsi_its_srem_ts_coding/srem_ts_SignalRequest.h>
+#include <etsi_its_srem_ts_conversion/convertIntersectionAccessPoint.h>
+#include <etsi_its_srem_ts_conversion/convertIntersectionReferenceID.h>
+#include <etsi_its_srem_ts_conversion/convertPriorityRequestType.h>
+#include <etsi_its_srem_ts_conversion/convertRequestID.h>
+#include <etsi_its_srem_ts_msgs/msg/signal_request.hpp>
+namespace srem_ts_msgs = etsi_its_srem_ts_msgs::msg;
 
 
-namespace etsi_its_srem_conversion {
+namespace etsi_its_srem_ts_conversion {
 
-void toRos_SignalRequest(const srem_SignalRequest_t& in, srem_msgs::SignalRequest& out) {
+void toRos_SignalRequest(const srem_ts_SignalRequest_t& in, srem_ts_msgs::SignalRequest& out) {
   toRos_IntersectionReferenceID(in.id, out.id);
   toRos_RequestID(in.requestID, out.request_id);
   toRos_PriorityRequestType(in.requestType, out.request_type);
@@ -69,14 +71,14 @@ void toRos_SignalRequest(const srem_SignalRequest_t& in, srem_msgs::SignalReques
   }
 }
 
-void toStruct_SignalRequest(const srem_msgs::SignalRequest& in, srem_SignalRequest_t& out) {
-  memset(&out, 0, sizeof(srem_SignalRequest_t));
+void toStruct_SignalRequest(const srem_ts_msgs::SignalRequest& in, srem_ts_SignalRequest_t& out) {
+  memset(&out, 0, sizeof(srem_ts_SignalRequest_t));
   toStruct_IntersectionReferenceID(in.id, out.id);
   toStruct_RequestID(in.request_id, out.requestID);
   toStruct_PriorityRequestType(in.request_type, out.requestType);
   toStruct_IntersectionAccessPoint(in.in_bound_lane, out.inBoundLane);
   if (in.out_bound_lane_is_present) {
-    out.outBoundLane = (srem_IntersectionAccessPoint_t*) calloc(1, sizeof(srem_IntersectionAccessPoint_t));
+    out.outBoundLane = (srem_ts_IntersectionAccessPoint_t*) calloc(1, sizeof(srem_ts_IntersectionAccessPoint_t));
     toStruct_IntersectionAccessPoint(in.out_bound_lane, *out.outBoundLane);
   }
 }

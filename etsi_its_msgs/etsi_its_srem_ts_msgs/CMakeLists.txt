@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(etsi_its_srem_msgs)
+project(etsi_its_srem_ts_msgs)
 
 find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)

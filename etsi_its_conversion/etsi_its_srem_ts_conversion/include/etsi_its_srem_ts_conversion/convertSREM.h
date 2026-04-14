@@ -27,51 +27,46 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SREM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
+  etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
   -t \
-  srem
+  srem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
-*
-* Signal request extended Message Message
-* This DF includes DEs for the SREM: protocolVersion, the SREM message type identifier `messageID`,
-* the station identifier `stationID` of the originating ITS-S and the signal request data from ETSI-ITS-DSRC.
-*
-* @field header: The DE `protocolVersion` is used to select the appropriate protocol decoder at the receiving ITS-S. 
-*                It shall be set to 2.
-*                The DE `messageID` shall be srem(9).
-* @field srm:    contains the Signal request data as defined in ETSI-ITS-DSRC.
-* 
-* @category: Basic Information
-* @revision: V1.3.1
-*
 SREM ::= SEQUENCE {
+    -- @details header
+    -- The DE _protocolVersion_ is used to select the appropriate protocol decoder at the receiving ITS-S.
+    --   It shall be set to 2.
+    -- The DE _messageID_ shall be srem(9).
     header  ItsPduHeader,
+    -- @details srm
+    -- The DE _srm_ contains the Signal request data as defined in ISO TS 19091.
     srm     SignalRequestMessage
 }
 ----------------------------------------------------------------------------- */
 
 #pragma once
 
-#include <etsi_its_srem_coding/srem_SREM.h>
-#include <etsi_its_srem_conversion/convertItsPduHeader.h>
-#include <etsi_its_srem_conversion/convertSignalRequestMessage.h>
-#include <etsi_its_srem_msgs/msg/srem.hpp>
-namespace srem_msgs = etsi_its_srem_msgs::msg;
+#include <etsi_its_srem_ts_coding/srem_ts_SREM.h>
+#include <etsi_its_srem_ts_conversion/convertItsPduHeader.h>
+#include <etsi_its_srem_ts_conversion/convertSignalRequestMessage.h>
+#include <etsi_its_srem_ts_msgs/msg/srem.hpp>
+namespace srem_ts_msgs = etsi_its_srem_ts_msgs::msg;
 
 
-namespace etsi_its_srem_conversion {
+namespace etsi_its_srem_ts_conversion {
 
-void toRos_SREM(const srem_SREM_t& in, srem_msgs::SREM& out) {
+void toRos_SREM(const srem_ts_SREM_t& in, srem_ts_msgs::SREM& out) {
   toRos_ItsPduHeader(in.header, out.header);
   toRos_SignalRequestMessage(in.srm, out.srm);
 }
 
-void toStruct_SREM(const srem_msgs::SREM& in, srem_SREM_t& out) {
-  memset(&out, 0, sizeof(srem_SREM_t));
+void toStruct_SREM(const srem_ts_msgs::SREM& in, srem_ts_SREM_t& out) {
+  memset(&out, 0, sizeof(srem_ts_SREM_t));
   toStruct_ItsPduHeader(in.header, out.header);
   toStruct_SignalRequestMessage(in.srm, out.srm);
 }

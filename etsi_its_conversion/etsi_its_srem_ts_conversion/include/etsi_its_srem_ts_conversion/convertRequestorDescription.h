@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SREM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
+  etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
   -t \
-  srem
+  srem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -50,21 +52,21 @@ RequestorDescription ::= SEQUENCE {
 
 #pragma once
 
-#include <etsi_its_srem_coding/srem_RequestorDescription.h>
-#include <etsi_its_srem_conversion/convertDeltaTime.h>
-#include <etsi_its_srem_conversion/convertDescriptiveName.h>
-#include <etsi_its_srem_conversion/convertRequestorPositionVector.h>
-#include <etsi_its_srem_conversion/convertRequestorType.h>
-#include <etsi_its_srem_conversion/convertTransitVehicleOccupancy.h>
-#include <etsi_its_srem_conversion/convertTransitVehicleStatus.h>
-#include <etsi_its_srem_conversion/convertVehicleID.h>
-#include <etsi_its_srem_msgs/msg/requestor_description.hpp>
-namespace srem_msgs = etsi_its_srem_msgs::msg;
+#include <etsi_its_srem_ts_coding/srem_ts_RequestorDescription.h>
+#include <etsi_its_srem_ts_conversion/convertDeltaTime.h>
+#include <etsi_its_srem_ts_conversion/convertDescriptiveName.h>
+#include <etsi_its_srem_ts_conversion/convertRequestorPositionVector.h>
+#include <etsi_its_srem_ts_conversion/convertRequestorType.h>
+#include <etsi_its_srem_ts_conversion/convertTransitVehicleOccupancy.h>
+#include <etsi_its_srem_ts_conversion/convertTransitVehicleStatus.h>
+#include <etsi_its_srem_ts_conversion/convertVehicleID.h>
+#include <etsi_its_srem_ts_msgs/msg/requestor_description.hpp>
+namespace srem_ts_msgs = etsi_its_srem_ts_msgs::msg;
 
 
-namespace etsi_its_srem_conversion {
+namespace etsi_its_srem_ts_conversion {
 
-void toRos_RequestorDescription(const srem_RequestorDescription_t& in, srem_msgs::RequestorDescription& out) {
+void toRos_RequestorDescription(const srem_ts_RequestorDescription_t& in, srem_ts_msgs::RequestorDescription& out) {
   toRos_VehicleID(in.id, out.id);
   if (in.type) {
     toRos_RequestorType(*in.type, out.type);
@@ -96,35 +98,35 @@ void toRos_RequestorDescription(const srem_RequestorDescription_t& in, srem_msgs
   }
 }
 
-void toStruct_RequestorDescription(const srem_msgs::RequestorDescription& in, srem_RequestorDescription_t& out) {
-  memset(&out, 0, sizeof(srem_RequestorDescription_t));
+void toStruct_RequestorDescription(const srem_ts_msgs::RequestorDescription& in, srem_ts_RequestorDescription_t& out) {
+  memset(&out, 0, sizeof(srem_ts_RequestorDescription_t));
   toStruct_VehicleID(in.id, out.id);
   if (in.type_is_present) {
-    out.type = (srem_RequestorType_t*) calloc(1, sizeof(srem_RequestorType_t));
+    out.type = (srem_ts_RequestorType_t*) calloc(1, sizeof(srem_ts_RequestorType_t));
     toStruct_RequestorType(in.type, *out.type);
   }
   if (in.position_is_present) {
-    out.position = (srem_RequestorPositionVector_t*) calloc(1, sizeof(srem_RequestorPositionVector_t));
+    out.position = (srem_ts_RequestorPositionVector_t*) calloc(1, sizeof(srem_ts_RequestorPositionVector_t));
     toStruct_RequestorPositionVector(in.position, *out.position);
   }
   if (in.name_is_present) {
-    out.name = (srem_DescriptiveName_t*) calloc(1, sizeof(srem_DescriptiveName_t));
+    out.name = (srem_ts_DescriptiveName_t*) calloc(1, sizeof(srem_ts_DescriptiveName_t));
     toStruct_DescriptiveName(in.name, *out.name);
   }
   if (in.route_name_is_present) {
-    out.routeName = (srem_DescriptiveName_t*) calloc(1, sizeof(srem_DescriptiveName_t));
+    out.routeName = (srem_ts_DescriptiveName_t*) calloc(1, sizeof(srem_ts_DescriptiveName_t));
     toStruct_DescriptiveName(in.route_name, *out.routeName);
   }
   if (in.transit_status_is_present) {
-    out.transitStatus = (srem_TransitVehicleStatus_t*) calloc(1, sizeof(srem_TransitVehicleStatus_t));
+    out.transitStatus = (srem_ts_TransitVehicleStatus_t*) calloc(1, sizeof(srem_ts_TransitVehicleStatus_t));
     toStruct_TransitVehicleStatus(in.transit_status, *out.transitStatus);
   }
   if (in.transit_occupancy_is_present) {
-    out.transitOccupancy = (srem_TransitVehicleOccupancy_t*) calloc(1, sizeof(srem_TransitVehicleOccupancy_t));
+    out.transitOccupancy = (srem_ts_TransitVehicleOccupancy_t*) calloc(1, sizeof(srem_ts_TransitVehicleOccupancy_t));
     toStruct_TransitVehicleOccupancy(in.transit_occupancy, *out.transitOccupancy);
   }
   if (in.transit_schedule_is_present) {
-    out.transitSchedule = (srem_DeltaTime_t*) calloc(1, sizeof(srem_DeltaTime_t));
+    out.transitSchedule = (srem_ts_DeltaTime_t*) calloc(1, sizeof(srem_ts_DeltaTime_t));
     toStruct_DeltaTime(in.transit_schedule, *out.transitSchedule);
   }
 }

@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SSEM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_ssem_ts_conversion/include/etsi_its_ssem_ts_conversion/ \
+  etsi_its_conversion/etsi_its_ssem_ts_conversion/include/etsi_its_ssem_ts_conversion \
   -t \
-  ssem
+  ssem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -45,48 +47,48 @@ IntersectionAccessPoint ::= CHOICE {
 
 #pragma once
 
-#include <etsi_its_ssem_coding/ssem_IntersectionAccessPoint.h>
-#include <etsi_its_ssem_conversion/convertApproachID.h>
-#include <etsi_its_ssem_conversion/convertLaneConnectionID.h>
-#include <etsi_its_ssem_conversion/convertLaneID.h>
-#include <etsi_its_ssem_msgs/msg/intersection_access_point.hpp>
-namespace ssem_msgs = etsi_its_ssem_msgs::msg;
+#include <etsi_its_ssem_ts_coding/ssem_ts_IntersectionAccessPoint.h>
+#include <etsi_its_ssem_ts_conversion/convertApproachID.h>
+#include <etsi_its_ssem_ts_conversion/convertLaneConnectionID.h>
+#include <etsi_its_ssem_ts_conversion/convertLaneID.h>
+#include <etsi_its_ssem_ts_msgs/msg/intersection_access_point.hpp>
+namespace ssem_ts_msgs = etsi_its_ssem_ts_msgs::msg;
 
 
-namespace etsi_its_ssem_conversion {
+namespace etsi_its_ssem_ts_conversion {
 
-void toRos_IntersectionAccessPoint(const ssem_IntersectionAccessPoint_t& in, ssem_msgs::IntersectionAccessPoint& out) {
+void toRos_IntersectionAccessPoint(const ssem_ts_IntersectionAccessPoint_t& in, ssem_ts_msgs::IntersectionAccessPoint& out) {
   switch (in.present) {
-  case ssem_IntersectionAccessPoint_PR_lane:
+  case ssem_ts_IntersectionAccessPoint_PR_lane:
     toRos_LaneID(in.choice.lane, out.lane);
-    out.choice = ssem_msgs::IntersectionAccessPoint::CHOICE_LANE;
+    out.choice = ssem_ts_msgs::IntersectionAccessPoint::CHOICE_LANE;
     break;
-  case ssem_IntersectionAccessPoint_PR_approach:
+  case ssem_ts_IntersectionAccessPoint_PR_approach:
     toRos_ApproachID(in.choice.approach, out.approach);
-    out.choice = ssem_msgs::IntersectionAccessPoint::CHOICE_APPROACH;
+    out.choice = ssem_ts_msgs::IntersectionAccessPoint::CHOICE_APPROACH;
     break;
-  case ssem_IntersectionAccessPoint_PR_connection:
+  case ssem_ts_IntersectionAccessPoint_PR_connection:
     toRos_LaneConnectionID(in.choice.connection, out.connection);
-    out.choice = ssem_msgs::IntersectionAccessPoint::CHOICE_CONNECTION;
+    out.choice = ssem_ts_msgs::IntersectionAccessPoint::CHOICE_CONNECTION;
     break;
   default: break;
   }
 }
 
-void toStruct_IntersectionAccessPoint(const ssem_msgs::IntersectionAccessPoint& in, ssem_IntersectionAccessPoint_t& out) {
-  memset(&out, 0, sizeof(ssem_IntersectionAccessPoint_t));
+void toStruct_IntersectionAccessPoint(const ssem_ts_msgs::IntersectionAccessPoint& in, ssem_ts_IntersectionAccessPoint_t& out) {
+  memset(&out, 0, sizeof(ssem_ts_IntersectionAccessPoint_t));
   switch (in.choice) {
-  case ssem_msgs::IntersectionAccessPoint::CHOICE_LANE:
+  case ssem_ts_msgs::IntersectionAccessPoint::CHOICE_LANE:
     toStruct_LaneID(in.lane, out.choice.lane);
-    out.present = ssem_IntersectionAccessPoint_PR::ssem_IntersectionAccessPoint_PR_lane;
+    out.present = ssem_ts_IntersectionAccessPoint_PR::ssem_ts_IntersectionAccessPoint_PR_lane;
     break;
-  case ssem_msgs::IntersectionAccessPoint::CHOICE_APPROACH:
+  case ssem_ts_msgs::IntersectionAccessPoint::CHOICE_APPROACH:
     toStruct_ApproachID(in.approach, out.choice.approach);
-    out.present = ssem_IntersectionAccessPoint_PR::ssem_IntersectionAccessPoint_PR_approach;
+    out.present = ssem_ts_IntersectionAccessPoint_PR::ssem_ts_IntersectionAccessPoint_PR_approach;
     break;
-  case ssem_msgs::IntersectionAccessPoint::CHOICE_CONNECTION:
+  case ssem_ts_msgs::IntersectionAccessPoint::CHOICE_CONNECTION:
     toStruct_LaneConnectionID(in.connection, out.choice.connection);
-    out.present = ssem_IntersectionAccessPoint_PR::ssem_IntersectionAccessPoint_PR_connection;
+    out.present = ssem_ts_IntersectionAccessPoint_PR::ssem_ts_IntersectionAccessPoint_PR_connection;
     break;
   default: break;
   }

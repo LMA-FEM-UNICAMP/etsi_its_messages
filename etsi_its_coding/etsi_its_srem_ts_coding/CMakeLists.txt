@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(etsi_its_spatem_ts_coding)
+project(etsi_its_srem_ts_coding)
 
 AUX_SOURCE_DIRECTORY(src SRC_FILES)
 

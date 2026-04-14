@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SREM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
+  etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
   -t \
-  srem
+  srem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -45,17 +47,17 @@ RequestorPositionVector ::= SEQUENCE {
 
 #pragma once
 
-#include <etsi_its_srem_coding/srem_RequestorPositionVector.h>
-#include <etsi_its_srem_conversion/convertAngle.h>
-#include <etsi_its_srem_conversion/convertPosition3D.h>
-#include <etsi_its_srem_conversion/convertTransmissionAndSpeed.h>
-#include <etsi_its_srem_msgs/msg/requestor_position_vector.hpp>
-namespace srem_msgs = etsi_its_srem_msgs::msg;
+#include <etsi_its_srem_ts_coding/srem_ts_RequestorPositionVector.h>
+#include <etsi_its_srem_ts_conversion/convertAngle.h>
+#include <etsi_its_srem_ts_conversion/convertPosition3D.h>
+#include <etsi_its_srem_ts_conversion/convertTransmissionAndSpeed.h>
+#include <etsi_its_srem_ts_msgs/msg/requestor_position_vector.hpp>
+namespace srem_ts_msgs = etsi_its_srem_ts_msgs::msg;
 
 
-namespace etsi_its_srem_conversion {
+namespace etsi_its_srem_ts_conversion {
 
-void toRos_RequestorPositionVector(const srem_RequestorPositionVector_t& in, srem_msgs::RequestorPositionVector& out) {
+void toRos_RequestorPositionVector(const srem_ts_RequestorPositionVector_t& in, srem_ts_msgs::RequestorPositionVector& out) {
   toRos_Position3D(in.position, out.position);
   if (in.heading) {
     toRos_Angle(*in.heading, out.heading);
@@ -67,15 +69,15 @@ void toRos_RequestorPositionVector(const srem_RequestorPositionVector_t& in, sre
   }
 }
 
-void toStruct_RequestorPositionVector(const srem_msgs::RequestorPositionVector& in, srem_RequestorPositionVector_t& out) {
-  memset(&out, 0, sizeof(srem_RequestorPositionVector_t));
+void toStruct_RequestorPositionVector(const srem_ts_msgs::RequestorPositionVector& in, srem_ts_RequestorPositionVector_t& out) {
+  memset(&out, 0, sizeof(srem_ts_RequestorPositionVector_t));
   toStruct_Position3D(in.position, out.position);
   if (in.heading_is_present) {
-    out.heading = (srem_Angle_t*) calloc(1, sizeof(srem_Angle_t));
+    out.heading = (srem_ts_Angle_t*) calloc(1, sizeof(srem_ts_Angle_t));
     toStruct_Angle(in.heading, *out.heading);
   }
   if (in.speed_is_present) {
-    out.speed = (srem_TransmissionAndSpeed_t*) calloc(1, sizeof(srem_TransmissionAndSpeed_t));
+    out.speed = (srem_ts_TransmissionAndSpeed_t*) calloc(1, sizeof(srem_ts_TransmissionAndSpeed_t));
     toStruct_TransmissionAndSpeed(in.speed, *out.speed);
   }
 }

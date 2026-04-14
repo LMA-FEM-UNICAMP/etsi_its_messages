@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SREM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
+  etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
   -t \
-  srem
+  srem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -45,48 +47,48 @@ IntersectionAccessPoint ::= CHOICE {
 
 #pragma once
 
-#include <etsi_its_srem_coding/srem_IntersectionAccessPoint.h>
-#include <etsi_its_srem_conversion/convertApproachID.h>
-#include <etsi_its_srem_conversion/convertLaneConnectionID.h>
-#include <etsi_its_srem_conversion/convertLaneID.h>
-#include <etsi_its_srem_msgs/msg/intersection_access_point.hpp>
-namespace srem_msgs = etsi_its_srem_msgs::msg;
+#include <etsi_its_srem_ts_coding/srem_ts_IntersectionAccessPoint.h>
+#include <etsi_its_srem_ts_conversion/convertApproachID.h>
+#include <etsi_its_srem_ts_conversion/convertLaneConnectionID.h>
+#include <etsi_its_srem_ts_conversion/convertLaneID.h>
+#include <etsi_its_srem_ts_msgs/msg/intersection_access_point.hpp>
+namespace srem_ts_msgs = etsi_its_srem_ts_msgs::msg;
 
 
-namespace etsi_its_srem_conversion {
+namespace etsi_its_srem_ts_conversion {
 
-void toRos_IntersectionAccessPoint(const srem_IntersectionAccessPoint_t& in, srem_msgs::IntersectionAccessPoint& out) {
+void toRos_IntersectionAccessPoint(const srem_ts_IntersectionAccessPoint_t& in, srem_ts_msgs::IntersectionAccessPoint& out) {
   switch (in.present) {
-  case srem_IntersectionAccessPoint_PR_lane:
+  case srem_ts_IntersectionAccessPoint_PR_lane:
     toRos_LaneID(in.choice.lane, out.lane);
-    out.choice = srem_msgs::IntersectionAccessPoint::CHOICE_LANE;
+    out.choice = srem_ts_msgs::IntersectionAccessPoint::CHOICE_LANE;
     break;
-  case srem_IntersectionAccessPoint_PR_approach:
+  case srem_ts_IntersectionAccessPoint_PR_approach:
     toRos_ApproachID(in.choice.approach, out.approach);
-    out.choice = srem_msgs::IntersectionAccessPoint::CHOICE_APPROACH;
+    out.choice = srem_ts_msgs::IntersectionAccessPoint::CHOICE_APPROACH;
     break;
-  case srem_IntersectionAccessPoint_PR_connection:
+  case srem_ts_IntersectionAccessPoint_PR_connection:
     toRos_LaneConnectionID(in.choice.connection, out.connection);
-    out.choice = srem_msgs::IntersectionAccessPoint::CHOICE_CONNECTION;
+    out.choice = srem_ts_msgs::IntersectionAccessPoint::CHOICE_CONNECTION;
     break;
   default: break;
   }
 }
 
-void toStruct_IntersectionAccessPoint(const srem_msgs::IntersectionAccessPoint& in, srem_IntersectionAccessPoint_t& out) {
-  memset(&out, 0, sizeof(srem_IntersectionAccessPoint_t));
+void toStruct_IntersectionAccessPoint(const srem_ts_msgs::IntersectionAccessPoint& in, srem_ts_IntersectionAccessPoint_t& out) {
+  memset(&out, 0, sizeof(srem_ts_IntersectionAccessPoint_t));
   switch (in.choice) {
-  case srem_msgs::IntersectionAccessPoint::CHOICE_LANE:
+  case srem_ts_msgs::IntersectionAccessPoint::CHOICE_LANE:
     toStruct_LaneID(in.lane, out.choice.lane);
-    out.present = srem_IntersectionAccessPoint_PR::srem_IntersectionAccessPoint_PR_lane;
+    out.present = srem_ts_IntersectionAccessPoint_PR::srem_ts_IntersectionAccessPoint_PR_lane;
     break;
-  case srem_msgs::IntersectionAccessPoint::CHOICE_APPROACH:
+  case srem_ts_msgs::IntersectionAccessPoint::CHOICE_APPROACH:
     toStruct_ApproachID(in.approach, out.choice.approach);
-    out.present = srem_IntersectionAccessPoint_PR::srem_IntersectionAccessPoint_PR_approach;
+    out.present = srem_ts_IntersectionAccessPoint_PR::srem_ts_IntersectionAccessPoint_PR_approach;
     break;
-  case srem_msgs::IntersectionAccessPoint::CHOICE_CONNECTION:
+  case srem_ts_msgs::IntersectionAccessPoint::CHOICE_CONNECTION:
     toStruct_LaneConnectionID(in.connection, out.choice.connection);
-    out.present = srem_IntersectionAccessPoint_PR::srem_IntersectionAccessPoint_PR_connection;
+    out.present = srem_ts_IntersectionAccessPoint_PR::srem_ts_IntersectionAccessPoint_PR_connection;
     break;
   default: break;
   }

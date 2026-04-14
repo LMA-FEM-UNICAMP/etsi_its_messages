@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SSEM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_ssem_ts_conversion/include/etsi_its_ssem_ts_conversion/ \
+  etsi_its_conversion/etsi_its_ssem_ts_conversion/include/etsi_its_ssem_ts_conversion \
   -t \
-  ssem
+  ssem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -47,19 +49,19 @@ SignalRequesterInfo ::= SEQUENCE {
 
 #pragma once
 
-#include <etsi_its_ssem_coding/ssem_SignalRequesterInfo.h>
-#include <etsi_its_ssem_conversion/convertBasicVehicleRole.h>
-#include <etsi_its_ssem_conversion/convertMsgCount.h>
-#include <etsi_its_ssem_conversion/convertRequestID.h>
-#include <etsi_its_ssem_conversion/convertRequestorType.h>
-#include <etsi_its_ssem_conversion/convertVehicleID.h>
-#include <etsi_its_ssem_msgs/msg/signal_requester_info.hpp>
-namespace ssem_msgs = etsi_its_ssem_msgs::msg;
+#include <etsi_its_ssem_ts_coding/ssem_ts_SignalRequesterInfo.h>
+#include <etsi_its_ssem_ts_conversion/convertBasicVehicleRole.h>
+#include <etsi_its_ssem_ts_conversion/convertMsgCount.h>
+#include <etsi_its_ssem_ts_conversion/convertRequestID.h>
+#include <etsi_its_ssem_ts_conversion/convertRequestorType.h>
+#include <etsi_its_ssem_ts_conversion/convertVehicleID.h>
+#include <etsi_its_ssem_ts_msgs/msg/signal_requester_info.hpp>
+namespace ssem_ts_msgs = etsi_its_ssem_ts_msgs::msg;
 
 
-namespace etsi_its_ssem_conversion {
+namespace etsi_its_ssem_ts_conversion {
 
-void toRos_SignalRequesterInfo(const ssem_SignalRequesterInfo_t& in, ssem_msgs::SignalRequesterInfo& out) {
+void toRos_SignalRequesterInfo(const ssem_ts_SignalRequesterInfo_t& in, ssem_ts_msgs::SignalRequesterInfo& out) {
   toRos_VehicleID(in.id, out.id);
   toRos_RequestID(in.request, out.request);
   toRos_MsgCount(in.sequenceNumber, out.sequence_number);
@@ -73,17 +75,17 @@ void toRos_SignalRequesterInfo(const ssem_SignalRequesterInfo_t& in, ssem_msgs::
   }
 }
 
-void toStruct_SignalRequesterInfo(const ssem_msgs::SignalRequesterInfo& in, ssem_SignalRequesterInfo_t& out) {
-  memset(&out, 0, sizeof(ssem_SignalRequesterInfo_t));
+void toStruct_SignalRequesterInfo(const ssem_ts_msgs::SignalRequesterInfo& in, ssem_ts_SignalRequesterInfo_t& out) {
+  memset(&out, 0, sizeof(ssem_ts_SignalRequesterInfo_t));
   toStruct_VehicleID(in.id, out.id);
   toStruct_RequestID(in.request, out.request);
   toStruct_MsgCount(in.sequence_number, out.sequenceNumber);
   if (in.role_is_present) {
-    out.role = (ssem_BasicVehicleRole_t*) calloc(1, sizeof(ssem_BasicVehicleRole_t));
+    out.role = (ssem_ts_BasicVehicleRole_t*) calloc(1, sizeof(ssem_ts_BasicVehicleRole_t));
     toStruct_BasicVehicleRole(in.role, *out.role);
   }
   if (in.type_data_is_present) {
-    out.typeData = (ssem_RequestorType_t*) calloc(1, sizeof(ssem_RequestorType_t));
+    out.typeData = (ssem_ts_RequestorType_t*) calloc(1, sizeof(ssem_ts_RequestorType_t));
     toStruct_RequestorType(in.type_data, *out.typeData);
   }
 }

@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SREM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
+  etsi_its_conversion/etsi_its_srem_ts_conversion/include/etsi_its_srem_ts_conversion \
   -t \
-  srem
+  srem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -65,20 +67,20 @@ BasicVehicleRole ::= ENUMERATED {
 
 #pragma once
 
-#include <etsi_its_srem_coding/srem_BasicVehicleRole.h>
+#include <etsi_its_srem_ts_coding/srem_ts_BasicVehicleRole.h>
 
-#include <etsi_its_srem_msgs/msg/basic_vehicle_role.hpp>
-namespace srem_msgs = etsi_its_srem_msgs::msg;
+#include <etsi_its_srem_ts_msgs/msg/basic_vehicle_role.hpp>
+namespace srem_ts_msgs = etsi_its_srem_ts_msgs::msg;
 
 
-namespace etsi_its_srem_conversion {
+namespace etsi_its_srem_ts_conversion {
 
-void toRos_BasicVehicleRole(const srem_BasicVehicleRole_t& in, srem_msgs::BasicVehicleRole& out) {
+void toRos_BasicVehicleRole(const srem_ts_BasicVehicleRole_t& in, srem_ts_msgs::BasicVehicleRole& out) {
   out.value = in;
 }
 
-void toStruct_BasicVehicleRole(const srem_msgs::BasicVehicleRole& in, srem_BasicVehicleRole_t& out) {
-  memset(&out, 0, sizeof(srem_BasicVehicleRole_t));
+void toStruct_BasicVehicleRole(const srem_ts_msgs::BasicVehicleRole& in, srem_ts_BasicVehicleRole_t& out) {
+  memset(&out, 0, sizeof(srem_ts_BasicVehicleRole_t));
   out = in.value;
 }
 

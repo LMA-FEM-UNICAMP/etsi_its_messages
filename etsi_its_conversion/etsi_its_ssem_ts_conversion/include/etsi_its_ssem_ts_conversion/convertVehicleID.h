@@ -27,11 +27,13 @@ python3 \
   utils/codegen/codegen-py/asn1ToConversionHeader.py \
   asn1/raw/is_ts103301/SSEM-PDU-Descriptions.asn \
   asn1/raw/is_ts103301/cdd/ITS-Container.asn \
-  asn1/raw/is_ts103301/reference/ISO-TS-19091-addgrp-C-2018.asn \
+  asn1/raw/is_ts103301/iso-patched/ISO24534-3_ElectronicRegistrationIdentificationVehicleDataModule-patched.asn \
+  asn1/raw/is_ts103301/build/asn1/ISO-TS-19091-addgrp-C-2018-patched.asn \
+  asn1/patched/is_ts103301/build/asn1/ISO14816_AVIAEINumberingAndDataStructures.asn \
   -o \
-  ./etsi_its_conversion/etsi_its_ssem_ts_conversion/include/etsi_its_ssem_ts_conversion/ \
+  etsi_its_conversion/etsi_its_ssem_ts_conversion/include/etsi_its_ssem_ts_conversion \
   -t \
-  ssem
+  ssem_ts
 ----------------------------------------------------------------------------- */
 
 /** ASN.1 Definition -----------------------------------------------------------
@@ -43,39 +45,39 @@ VehicleID ::= CHOICE {
 
 #pragma once
 
-#include <etsi_its_ssem_coding/ssem_VehicleID.h>
-#include <etsi_its_ssem_conversion/convertStationID.h>
-#include <etsi_its_ssem_conversion/convertTemporaryID.h>
-#include <etsi_its_ssem_msgs/msg/vehicle_id.hpp>
-namespace ssem_msgs = etsi_its_ssem_msgs::msg;
+#include <etsi_its_ssem_ts_coding/ssem_ts_VehicleID.h>
+#include <etsi_its_ssem_ts_conversion/convertStationID.h>
+#include <etsi_its_ssem_ts_conversion/convertTemporaryID.h>
+#include <etsi_its_ssem_ts_msgs/msg/vehicle_id.hpp>
+namespace ssem_ts_msgs = etsi_its_ssem_ts_msgs::msg;
 
 
-namespace etsi_its_ssem_conversion {
+namespace etsi_its_ssem_ts_conversion {
 
-void toRos_VehicleID(const ssem_VehicleID_t& in, ssem_msgs::VehicleID& out) {
+void toRos_VehicleID(const ssem_ts_VehicleID_t& in, ssem_ts_msgs::VehicleID& out) {
   switch (in.present) {
-  case ssem_VehicleID_PR_entityID:
+  case ssem_ts_VehicleID_PR_entityID:
     toRos_TemporaryID(in.choice.entityID, out.entity_id);
-    out.choice = ssem_msgs::VehicleID::CHOICE_ENTITY_ID;
+    out.choice = ssem_ts_msgs::VehicleID::CHOICE_ENTITY_ID;
     break;
-  case ssem_VehicleID_PR_stationID:
+  case ssem_ts_VehicleID_PR_stationID:
     toRos_StationID(in.choice.stationID, out.station_id);
-    out.choice = ssem_msgs::VehicleID::CHOICE_STATION_ID;
+    out.choice = ssem_ts_msgs::VehicleID::CHOICE_STATION_ID;
     break;
   default: break;
   }
 }
 
-void toStruct_VehicleID(const ssem_msgs::VehicleID& in, ssem_VehicleID_t& out) {
-  memset(&out, 0, sizeof(ssem_VehicleID_t));
+void toStruct_VehicleID(const ssem_ts_msgs::VehicleID& in, ssem_ts_VehicleID_t& out) {
+  memset(&out, 0, sizeof(ssem_ts_VehicleID_t));
   switch (in.choice) {
-  case ssem_msgs::VehicleID::CHOICE_ENTITY_ID:
+  case ssem_ts_msgs::VehicleID::CHOICE_ENTITY_ID:
     toStruct_TemporaryID(in.entity_id, out.choice.entityID);
-    out.present = ssem_VehicleID_PR::ssem_VehicleID_PR_entityID;
+    out.present = ssem_ts_VehicleID_PR::ssem_ts_VehicleID_PR_entityID;
     break;
-  case ssem_msgs::VehicleID::CHOICE_STATION_ID:
+  case ssem_ts_msgs::VehicleID::CHOICE_STATION_ID:
     toStruct_StationID(in.station_id, out.choice.stationID);
-    out.present = ssem_VehicleID_PR::ssem_VehicleID_PR_stationID;
+    out.present = ssem_ts_VehicleID_PR::ssem_ts_VehicleID_PR_stationID;
     break;
   default: break;
   }
