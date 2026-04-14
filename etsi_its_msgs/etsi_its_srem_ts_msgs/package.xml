@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="3">
+
+  <name>etsi_its_srem_ts_msgs</name>
+  <version>0.0.0</version>
+  <description>ROS messages for ETSI ITS SREM (TS)</description>
+
+  <maintainer email="gabriel.rocha@ieee.org">Gabriel Toffanetto França da Rocha</maintainer>
+  
+  <author email="gabriel.rocha@ieee.org">Gabriel Toffanetto França da Rocha</author>
+
+  <license>MIT</license>
+  <depend>std_msgs</depend>
+
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+
+</package>
