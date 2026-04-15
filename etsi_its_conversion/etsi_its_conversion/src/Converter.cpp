@@ -483,6 +483,14 @@ namespace etsi_its_conversion
       RCLCPP_ERROR(this->get_logger(), "SPAT not available yet!");
       break;
 
+    case kBtpHeaderDestinationPortSrem: // SREM
+      RCLCPP_ERROR(this->get_logger(), "SREM not available yet!");
+      break;
+
+    case kBtpHeaderDestinationPortSsem: // SSEM
+      RCLCPP_ERROR(this->get_logger(), "SSEM not available yet!");
+      break;
+
     case kBtpHeaderDestinationPortIvi: // IVIM
       RCLCPP_ERROR(this->get_logger(), "IVIM not available yet!");
       break;
